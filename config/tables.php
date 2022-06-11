@@ -36,5 +36,4 @@ return [
     'VENDOR_CATEGORY_RELATIVE' => 'vendor_category_relative',
 
     'PAGES' => 'pages'
-
 ];
