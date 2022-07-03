@@ -32,26 +32,14 @@ class CardBuilder {
         }
         return $posts;
     }
-    static function gameCard($arr_slot) {
-        if(empty($arr_slot)) return [];
+    static function gameCard($arr_posts) {
+        if(empty($arr_posts)) return [];
         $posts = [];
-        foreach ($arr_slot as $item) {
-            $vendor_id = Relative::getRelativeByPostId(self::TABLE_GAME_VENDOR, $item->id);
-            $vendors = [];
-            if(!empty($vendor_id)) {
-                $vendor = new Posts(['table' => self::TABLE_VENDOR, 'table_meta' => self::TABLE_VENDOR_META]);
-                $result = $vendor->getPublicPostsByArrId($vendor_id);
-                if(!$result->isEmpty()) {
-                    $vendors = [
-                        'title' => $result[0]->title
-                    ];
-                }
-            }
+        foreach ($arr_posts as $item) {
             $posts[] = [
                 'thumbnail' => $item->thumbnail,
                 'title' => $item->title,
-                'permalink' => '/'.$item->slug.'/'.$item->permalink,
-                'vendor' => $vendors
+                'permalink' => '/'.$item->slug.'/'.$item->permalink
             ];
         }
         return $posts;
@@ -60,25 +48,17 @@ class CardBuilder {
         if(empty($arr_casino)) return [];
         $posts = [];
         foreach ($arr_casino as $item) {
-            $licensed_id = Relative::getRelativeByPostId(self::TABLE_CASINO_LICENSE, $item->id);
-            $licenses = [];
-            if(!empty($licensed_id)) {
-                $post = new Posts(['table' => self::TABLE_LICENSE, 'table_meta' => self::TABLE_LICENSE_META]);
-                $result = $post->getPublicPostsByArrId($licensed_id);
-                if(!$result->isEmpty()) {
-                    $licenses = [
-                        'title' => $result[0]->title
-                    ];
-                }
-            }
-
             $posts[] = [
                 'thumbnail' => $item->thumbnail,
                 'rating' => $item->rating,
                 'permalink' => '/'.$item->slug.'/'.$item->permalink,
                 'ref' => json_decode($item->ref, true),
                 'title' => $item->title,
-                'licenses' => $licenses
+                'licenses' => json_decode($item->licenses, true),
+                'exchange' => json_decode($item->exchange, true),
+                'events' => json_decode($item->events, true),
+                'min_deposit' => $item->min_deposit,
+                'min_payout' => $item->min_payout
             ];
         }
         return $posts;

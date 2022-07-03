@@ -112,22 +112,38 @@ class AdminCasinoController extends BaseController
     protected static function dataValidateMetaSave($data)
     {
         $newData = [];
-        if(isset($data['faq'])) {
-            $newData['faq'] = json_encode($data['faq']);
-        }
-        else {
-            $newData['faq'] = json_encode([]);
-        }
-        if (isset($data['rating'])) {
-            $newData['rating'] = (int)$data['rating'];
-        } else {
-            $newData['rating'] = 0;
-        }
-        if (isset($data['ref'])) {
-            $newData['ref'] = json_encode($data['ref']);
-        } else {
-            $newData['ref'] = json_encode([]);
-        }
+        $newData['faq'] = isset($data['faq'])
+                             ? json_encode($data['faq'])
+                             : json_encode([]);
+
+        $newData['rating'] = isset($data['rating'])
+                          ? (int)$data['rating']
+                          : 0;
+
+        $newData['ref'] = isset($data['ref'])
+                             ? json_encode($data['ref'])
+                             : json_encode([]);
+      
+        $newData['licenses'] = isset($data['licenses'])
+                             ? json_encode($data['licenses'])
+                             : json_encode([]);
+        
+        $newData['exchange'] = isset($data['exchange'])
+                             ? json_encode($data['exchange'])
+                             : json_encode([]);
+
+        $newData['events'] = isset($data['events'])
+                             ? json_encode($data['events'])
+                             : json_encode([]);
+
+        $newData['min_deposit'] = isset($data['min_deposit']) 
+                                  ? $data['min_deposit'] 
+                                  : '';
+
+        $newData['min_payout'] = isset($data['min_payout']) 
+                                  ? $data['min_payout'] 
+                                  : '';
+        
         return $newData;
     }
 
@@ -137,6 +153,22 @@ class AdminCasinoController extends BaseController
         $newData['faq'] = json_decode($data->faq, true);
         $newData['rating'] = (int)$data->rating;
         $newData['ref'] = json_decode($data->ref, true);
+        $newData['exchange'] = json_decode($data->exchange, true);
+        $newData['events'] = json_decode($data->events, true);
+        $newData['min_deposit'] = $data->min_deposit;
+        $newData['min_payout'] = $data->min_payout;
+        if(empty($data->licenses)) {
+            $newData['licenses'] = [
+                'current_value' => [],
+                'all_value' => config('constants.LICENSES')
+            ];
+        }
+        else {
+            $newData['licenses'] = [
+                'current_value' => json_decode($data->licenses, true),
+                'all_value' => config('constants.LICENSES')
+            ];
+        }
         return $newData;
     }
 }

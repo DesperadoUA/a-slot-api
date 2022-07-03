@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Cash;
 use App\Models\Posts;
+use App\Services\PageService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Pages;
@@ -14,41 +15,11 @@ use Illuminate\Support\Facades\DB;
 class PageController extends Controller
 {
     protected $tables;
-    const POST_TYPE = 'page';
-    const OFFSET    = 0;
-    const LIMIT     = 8;
-    const MAIN_PAGE_LIMIT_CASINO = 10;
-    const LIMIT_POPULAR_GAME = 5;
-    const LIMIT_NEW_GAME = 5;
-    const LIMIT_POPULAR_BONUS = 5;
-    const LIMIT_NEW_CASINO = 5;
-    const CATEGORY_LIMIT_CASINO = 10000;
-    const CATEGORY_LIMIT_BONUSES = 10000;
-    const CATEGORY_LIMIT_GAMES = 10000;
-    const CATEGORY_LIMIT_VENDORS = 10000;
-    const CATEGORY_LIMIT_PAYMENT = 10000;
-    const CATEGORY_LIMIT_POKER = 10000;
-    const MAIN_PAGE_LIMIT_BONUS = 10;
-    const ORDER_BY  = 'DESC';
-    const ORDER_KEY = 'create_at';
+    protected $service;
     const LANG      = 1;
-    const TABLE = 'pages';
-    const TABLE_CASINO = 'casinos';
-    const TABLE_CASINO_META = 'casino_meta';
-    const TABLE_GAME = 'games';
-    const TABLE_GAME_META = 'game_meta';
-    const TABLE_BONUS = 'bonuses';
-    const TABLE_BONUS_META = 'bonus_meta';
-    const TABLE_TYPE_BONUS = 'type_bonuses';
-    const TABLE_TYPE_BONUS_META = 'type_bonus_meta';
-    const TABLE_VENDOR = 'vendors';
-    const TABLE_VENDOR_META = 'vendor_meta';
-    const TABLE_PAYMENT = 'payments';
-    const TABLE_PAYMENT_META = 'payment_meta';
-    const TABLE_POKER = 'pokers';
-    const TABLE_POKER_META = 'poker_meta';
     public function __construct() {
         $this->tables = config('tables');
+        $this->service = new PageService();
     }
     /**
      * Display a listing of the resource.
@@ -57,401 +28,41 @@ class PageController extends Controller
      */
     public function index(Request $request)
     {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        /*
-        $posts = new Pages();
-        $settings = [
-            'offset'    => $request->has('offset') ? $request->input('offset') : self::OFFSET,
-            'limit'     => $request->has('limit') ? $request->input('limit') : self::LIMIT,
-            'order_by'  => $request->has('order_by') ? $request->input('order_by') : self::ORDER_BY,
-            'order_key' => $request->has('order_key') ? $request->input('order_key') : self::ORDER_KEY,
-            'lang'      => $request->has('lang') ? $request->input('lang') : self::LANG
-        ];
-        $data = $posts->getPublicPosts($settings);
-        if(!$data->isEmpty()) {
-            $response['body'] = $data;
-            $response['confirm'] = 'ok';
-        }
-        */
+        $response = ['body' => [], 'confirm' => 'error'];
         return response()->json($response);
     }
-
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function main()
-    {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl('/');
-        if(!$data->isEmpty()) {
-
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $casino = new Posts(['table' => self::TABLE_CASINO, 'table_meta' => self::TABLE_CASINO_META]);
-            $game = new Posts(['table' => self::TABLE_GAME, 'table_meta' => self::TABLE_GAME_META]);
-            $bonus = new Posts(['table' => self::TABLE_BONUS, 'table_meta' => self::TABLE_BONUS_META]);
-
-            $settings = [
-                'lang'      => $data[0]->lang,
-                'limit'     => self::MAIN_PAGE_LIMIT_CASINO,
-                'order_key' => 'rating'
-            ];
-            $response['body']['casino'] = CardBuilder::casinoCard($casino->getPublicPosts($settings));
-
-            $settings = [
-                'lang'      => $data[0]->lang,
-                'limit'     => self::LIMIT_NEW_CASINO
-            ];
-            $response['body']['new_casino'] = CardBuilder::casinoCard($casino->getPublicPosts($settings));
-
-            $settings = [
-                'lang'      => $data[0]->lang,
-                'limit'     => self::LIMIT_NEW_GAME,
-                'order_key' => 'rating'
-            ];
-            $game_list = $game->getPublicPosts($settings);
-            $response['body']['top_game'] = CardBuilder::gameCard($game_list);
-
-            $settings = [
-                'lang'      => $data[0]->lang,
-                'limit'     => self::LIMIT_NEW_GAME
-            ];
-            $game_list = $game->getPublicPosts($settings);
-            $response['body']['new_game'] = CardBuilder::gameCard($game_list);
-
-            $settings = [
-                'lang'      => $data[0]->lang,
-                'limit'     => self::MAIN_PAGE_LIMIT_BONUS
-            ];
-            $bonus_list = $bonus->getPublicPosts($settings);
-            $response['body']['bonuses'] = CardBuilder::bonusCard($bonus_list);
-
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+    public function main(){ 
+        return response()->json($this->service->main());
     }
     public function casinos(){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.CASINOS'));
-        if(!$data->isEmpty()) {
-            $casino = new Posts(['table' => self::TABLE_CASINO, 'table_meta' => self::TABLE_CASINO_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'lang'      => $data[0]->lang,
-                'limit'     => self::CATEGORY_LIMIT_CASINO,
-                'order_key' => 'rating'
-            ];
-            $response['body']['casino'] = CardBuilder::casinoCard($casino->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+        return response()->json($this->service->casinos());
     }
     public function bonuses(){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.BONUSES'));
-        if(!$data->isEmpty()) {
-            $bonus = new Posts(['table' => self::TABLE_BONUS, 'table_meta' => self::TABLE_BONUS_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit' => self::CATEGORY_LIMIT_BONUSES,
-                'lang' =>  $data[0]->lang
-            ];
-            $response['body']['bonuses'] = CardBuilder::bonusCard($bonus->getPublicPosts($settings));
-            $response['body']['bonus_type'] = DB::table(self::TABLE_TYPE_BONUS)
-                                                  ->where('status', 'public')
-                                                  ->where('lang', $data[0]->lang)
-                                                  ->select('title')
-                                                  ->get();
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+        return response()->json($this->service->bonuses());
     }
     public function games(){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.GAMES'));
-        if(!$data->isEmpty()) {
-            $game = new Posts(['table' => self::TABLE_GAME, 'table_meta' => self::TABLE_GAME_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_GAMES,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['games'] = CardBuilder::gameCard($game->getPublicPosts($settings));
-            $response['body']['category'] = [];
-            $settings = [
-                'table' => $this->tables['GAME'],
-                'table_meta' => $this->tables['GAME_META'],
-                'table_category' => $this->tables['GAME_CATEGORY'],
-                'table_relative' => $this->tables['GAME_CATEGORY_RELATIVE']
-            ];
-            $category = new Category($settings);
-            $response['body']['category'] = CardBuilder::categoryCard($category->getPublicPosts(), 'games');
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+        return response()->json($this->service->games());
     }
     public function vendors(){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.VENDORS'));
-        if(!$data->isEmpty()) {
-            $vendor = new Posts(['table' => self::TABLE_VENDOR, 'table_meta' => self::TABLE_VENDOR_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_VENDORS,
-                'lang'      =>  $data[0]->lang,
-            ];
-            $response['body']['vendors'] = CardBuilder::vendorCard($vendor->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+        return response()->json($this->service->vendors());
     }
     public function payments(){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.PAYMENTS'));
-        if(!$data->isEmpty()) {
-            $payment = new Posts(['table' => self::TABLE_PAYMENT, 'table_meta' => self::TABLE_PAYMENT_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_PAYMENT,
-                'lang'      =>  $data[0]->lang,
-            ];
-            $response['body']['payments'] = CardBuilder::paymentCard($payment->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+        return response()->json($this->service->payments());
     }
-    public function pokers() {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.POKERS'));
-        if(!$data->isEmpty()) {
-            $poker = new Posts(['table' => self::TABLE_POKER, 'table_meta' => self::TABLE_POKER_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_POKER,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['poker'] = CardBuilder::pokerCard($poker->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+    public function pokers(){
+        return response()->json($this->service->pokers());
     }
-    public function countries() {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.COUNTRIES'));
-        if(!$data->isEmpty()) {
-            $poker = new Posts(['table' => self::TABLE_POKER, 'table_meta' => self::TABLE_POKER_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_POKER,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['poker'] = CardBuilder::pokerCard($poker->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+    public function news(){
+        return response()->json($this->service->news());
     }
-    public function currencies() {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.CURRENCIES'));
-        if(!$data->isEmpty()) {
-            $poker = new Posts(['table' => self::TABLE_POKER, 'table_meta' => self::TABLE_POKER_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_POKER,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['poker'] = CardBuilder::pokerCard($poker->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
-    }
-    public function languages() {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.LANGUAGES'));
-        if(!$data->isEmpty()) {
-            $poker = new Posts(['table' => self::TABLE_POKER, 'table_meta' => self::TABLE_POKER_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_POKER,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['poker'] = CardBuilder::pokerCard($poker->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
-    }
-    public function licenses() {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.LICENSES'));
-        if(!$data->isEmpty()) {
-            $poker = new Posts(['table' => self::TABLE_POKER, 'table_meta' => self::TABLE_POKER_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_POKER,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['poker'] = CardBuilder::pokerCard($poker->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
-    }
-    public function typePayments() {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.TYPE_PAYMENTS'));
-        if(!$data->isEmpty()) {
-            $poker = new Posts(['table' => self::TABLE_POKER, 'table_meta' => self::TABLE_POKER_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_POKER,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['poker'] = CardBuilder::pokerCard($poker->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
-    }
-    public function technologies() {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.TECHNOLOGIES'));
-        if(!$data->isEmpty()) {
-            $poker = new Posts(['table' => self::TABLE_POKER, 'table_meta' => self::TABLE_POKER_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_POKER,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['poker'] = CardBuilder::pokerCard($poker->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
-    }
-    public function typeBonuses() {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Pages();
-        $data = $post->getPublicPostByUrl(config('constants.PAGES.TYPE_BONUSES'));
-        if(!$data->isEmpty()) {
-            $poker = new Posts(['table' => self::TABLE_POKER, 'table_meta' => self::TABLE_POKER_META]);
-            $response['body'] = self::dataMetaDecode($data[0]);
-            $settings = [
-                'limit'     => self::CATEGORY_LIMIT_POKER,
-                'lang'      =>  $data[0]->lang,
-                'order_key' => 'rating'
-            ];
-            $response['body']['poker'] = CardBuilder::pokerCard($poker->getPublicPosts($settings));
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
-    }
-    protected static function dataMetaDecode($data){
-        $newData = [];
-        $newData['title'] = htmlspecialchars_decode($data->title);
-        $newData['short_desc'] = htmlspecialchars_decode($data->short_desc);
-        $newData['h1'] = htmlspecialchars_decode($data->h1);
-        $newData['meta_title'] = htmlspecialchars_decode($data->meta_title);
-        $newData['description'] = htmlspecialchars_decode($data->description);
-        $newData['keywords'] = htmlspecialchars_decode($data->keywords);
-        $str = str_replace('<pre', '<div', $data->content);
-        $str = str_replace('</pre', '</div', $str);
-        $str = str_replace('&nbsp;', '', $str);
-        $str = str_replace( '<p><br></p>', '', $str);
-        $str = str_replace( '<p></p>', '', $str);
-        $newData['content'] = htmlspecialchars_decode($str);
-        return $newData;
+    public function bettings(){
+        return response()->json($this->service->bettings());
     }
     public function search(Request $request){
         $response = [

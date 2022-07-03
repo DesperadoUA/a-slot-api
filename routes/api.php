@@ -14,24 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::namespace('Api')->group(function () {
-    /*
-    Route::get('pages/'.config('constants.PAGES.MAIN'), 'PageController@main')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.CASINOS'), 'PageController@casinos')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.BONUSES'), 'PageController@bonuses')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.GAMES'), 'PageController@games')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.VENDORS'), 'PageController@vendors')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.PAYMENTS'), 'PageController@payments')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.POKERS'), 'PageController@pokers')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.COUNTRIES'), 'PageController@countries')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.CURRENCIES'), 'PageController@currencies')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.LANGUAGES'), 'PageController@languages')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.LICENSES'), 'PageController@licenses')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.TYPE_PAYMENTS'), 'PageController@typePayments')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.TECHNOLOGIES'), 'PageController@technologies')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.TYPE_BONUSES'), 'PageController@typeBonuses')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.SITE_MAP'), 'PageController@siteMap')->middleware('cash');
-    Route::get(config('constants.PAGES.SEARCH'), 'PageController@search');
-
+/*
     Route::get('casino/{id}', 'CasinoController@show')->middleware('cash');
     Route::get('casinos/{id}', 'CasinoController@category')->middleware('cash');
     Route::get('poker/{id}', 'PokerController@show')->middleware('cash');
@@ -60,7 +43,6 @@ Route::namespace('Api')->group(function () {
     Route::get('type-bonuses/{id}', 'TypeBonusController@category')->middleware('cash');
 */
     // ----  Admin ---- //
-
     Route::post('admin/search', 'AdminSearchController@index')->middleware('api_auth');
 });
 

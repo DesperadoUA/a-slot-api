@@ -18,6 +18,11 @@ class CasinoMeta extends Migration
             $table->longText('faq');
             $table->integer('rating');
             $table->string('ref');
+            $table->string('licenses');
+            $table->string('exchange');
+            $table->string('events');
+            $table->string('min_deposit');
+            $table->string('min_payout');
             $table->unique('post_id');
             $table->foreign('post_id')
                 ->references('id')

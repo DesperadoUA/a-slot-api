@@ -8,7 +8,15 @@ return [
     'PAGES' => [
         'MAIN' => 'main',
         'SEARCH' => 'search',
-        'SITE_MAP' => 'sitemap'
+        'SITE_MAP' => 'sitemap',
+        'CASINO' => 'casino',
+        'BONUS' => 'bonus',
+        'GAME' => 'game',
+        'NEWS' => 'news',
+        'POKER' => 'poker',
+        'BETTING' => 'betting',
+        'VENDOR' => 'vendor',
+        'PAYMENT' => 'payment'
     ],
-
+    'LICENSES' => ['ukraine', 'curacao', 'UKGC']
 ];
