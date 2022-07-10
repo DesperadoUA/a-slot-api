@@ -23,11 +23,12 @@ class CasinoMeta extends Migration
             $table->string('events');
             $table->string('min_deposit');
             $table->string('min_payout');
+            $table->longText('slot_category');
             $table->unique('post_id');
             $table->foreign('post_id')
-                ->references('id')
-                ->on('casinos')
-                ->onDelete('cascade');
+                  ->references('id')
+                  ->on('casinos')
+                  ->onDelete('cascade');
         });
     }
 

@@ -18,5 +18,5 @@ return [
         'VENDOR' => 'vendor',
         'PAYMENT' => 'payment'
     ],
-    'LICENSES' => ['ukraine', 'curacao', 'UKGC']
+    'LICENSES' => ['ukraine', 'curacao', 'UKGC', 'alderney', 'belgium', 'gibraltar', 'denmark', 'canavec', 'costa_rica', 'malta', 'isle_of_man']
 ];

@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Cash;
 use App\Models\Posts;
 use App\Services\PageService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Pages;
-use App\Models\Category;
 use App\CardBuilder;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +13,7 @@ class PageController extends Controller
 {
     protected $tables;
     protected $service;
-    const LANG      = 1;
+    const LANG = 1;
     public function __construct() {
         $this->tables = config('tables');
         $this->service = new PageService();

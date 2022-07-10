@@ -29,8 +29,8 @@ class PageService extends BaseService {
                 'order_key' => 'rating'
             ];
             $this->response['body']['casino'] = CardBuilder::casinoCard($casino->getPublicPosts($settings));
-            Cash::store(url()->current(), json_encode($this->response));
             $this->response['confirm'] = 'ok';
+            Cash::store(url()->current(), json_encode($this->response));
         }
         return $this->response;
     }
@@ -126,5 +126,45 @@ class PageService extends BaseService {
             Cash::store(url()->current(), json_encode($this->response));
         }
         return $this->response;
+    }
+    public function adminIndex($settings) {
+        $posts = new Pages();
+        $arrPosts = $posts->getPosts($settings);
+        if(!$arrPosts->isEmpty()) {
+            $data = [];
+            foreach ($arrPosts as $item) $data[] = self::dataCommonDecode($item);
+            $this->response['body'] = $data;
+            $this->response['confirm'] = 'ok';
+            $this->response['total'] = $posts->getTotalCountByLang($settings['lang']);
+            $this->response['lang'] = config('constants.LANG')[$settings['lang']];
+        }
+        return $this->response;
+    }
+    public function adminShow($id) {
+        $post = new Pages();
+        $data = $post->getPostById($id);
+        if(!$data->isEmpty()) {
+            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['confirm'] = 'ok';
+        }
+        return $this->response;
+    }
+    public function update($data) {
+        $post = new Pages();
+        $data_save = self::dataValidateSave($data);
+        $post->updateById($data['id'], $data_save);
+        $this->response['confirm'] = 'ok';
+        Cash::deleteAll();
+        return $this->response;
+    }
+    protected static function dataCommonDecode($data){
+        $newData = parent::dataCommonDecode($data);
+        $newData['faq'] = json_decode($data->faq, true);
+        return $newData;
+    }
+    protected static function dataValidateSave($data){
+        $newData = parent::dataValidateSave($data);
+        $newData['faq'] = isset($data['faq']) ? json_encode($data['faq']) : json_encode([]);
+        return $newData;
     }
 }

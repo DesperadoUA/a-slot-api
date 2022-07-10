@@ -8,10 +8,13 @@ use Illuminate\Http\Request;
 use App\Models\Posts;
 use App\Models\Category;
 use App\Models\Relative;
+use App\Services\CasinoService;
 
 class CasinoController extends PostController
 {
-
+    public function __construct() {
+        $this->service = new CasinoService();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -56,78 +59,8 @@ class CasinoController extends PostController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        $post = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
-        $data = $post->getPublicPostByUrl($id);
-
-        if(!$data->isEmpty()) {
-            $response['body'] = $data[0];
-            $response['body'] = self::dataCommonDecode($data[0]) + self::dataMetaDecode($data[0]);
-
-            $response['body']['vendors'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_VENDOR_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
-                $response['body']['vendors'] = CardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['body']['type_payment'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_TYPE_PAYMENT_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['TYPE_PAYMENT'], 'table_meta' => $this->tables['TYPE_PAYMENT_META']]);
-                $response['body']['type_payment'] = CardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['body']['technology'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_TECHNOLOGY_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['TECHNOLOGY'], 'table_meta' => $this->tables['TECHNOLOGY_META']]);
-                $response['body']['technology'] = CardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['body']['payments'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_PAYMENT_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['PAYMENT'], 'table_meta' => $this->tables['PAYMENT_META']]);
-                $response['body']['payments'] = CardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['body']['licenses'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_LICENSE_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['LICENSE'], 'table_meta' => $this->tables['LICENSE_META']]);
-                $response['body']['licenses'] = CardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['body']['language'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_LANGUAGE_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['LANGUAGE'], 'table_meta' => $this->tables['LANGUAGE_META']]);
-                $response['body']['language'] = CardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['body']['currency'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_CURRENCY_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['CURRENCY'], 'table_meta' => $this->tables['CURRENCY_META']]);
-                $response['body']['currency'] = CardBuilder::currencyCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['body']['country'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_COUNTRY_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['COUNTRY'], 'table_meta' => $this->tables['COUNTRY_META']]);
-                $response['body']['country'] = CardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['body']['bonuses'] = [];
-            $arr_posts = Relative::getPostIdByRelative($this->tables['BONUS_CASINO_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['BONUS'], 'table_meta' => $this->tables['BONUS_META']]);
-                $response['body']['bonuses'] = CardBuilder::bonusCard($post->getPublicPostsByArrId($arr_posts));
-            }
-
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+    public function show($id) {
+        return response()->json($this->service->show($id));
     }
     public function category($id){
         $response = [

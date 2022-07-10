@@ -1,0 +1,1 @@
+Выполнение отдельно взятой миграции: php artisan migrate --path=/database/migrations/2022_07_07_100000_casino_vendor_relative.php 

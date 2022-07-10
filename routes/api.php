@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 
 Route::namespace('Api')->group(function () {
 /*
-    Route::get('casino/{id}', 'CasinoController@show')->middleware('cash');
     Route::get('casinos/{id}', 'CasinoController@category')->middleware('cash');
     Route::get('poker/{id}', 'PokerController@show')->middleware('cash');
     Route::get('pokers/{id}', 'PokerController@category')->middleware('cash');

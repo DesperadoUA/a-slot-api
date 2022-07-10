@@ -45,7 +45,7 @@ class BaseController extends Controller {
         $newData['post_type'] = $data->post_type;
         return $newData;
     }
-    protected static function dataValidateInsert($data, $main_table, $meta_table){
+    protected static function dataValidateInsert($data, $main_table, $meta_table) {
         $newData =  [];
         if(isset($data['title'])) {
             $newData['title'] = Validate::textValidate($data['title']);
@@ -536,7 +536,7 @@ class BaseController extends Controller {
             }
         }
     }
-    protected static function checkParentCategorySave($data, $main_table){
+    protected static function checkParentCategorySave($data, $main_table) {
         $newData['parent_id'] = 0;
         if(isset($data['parent_id'])) {
             if(!empty($data['parent_id'])){

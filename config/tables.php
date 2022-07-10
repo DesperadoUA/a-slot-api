@@ -9,6 +9,7 @@ return [
     'CASINO_META' => 'casino_meta',
     'CASINO_CATEGORY' => 'casino_category',
     'CASINO_CATEGORY_RELATIVE' => 'casino_category_relative',
+    'CASINO_VENDOR_RELATIVE' => 'casino_vendor_relative',
 
     'POKER' => 'pokers',
     'POKER_META' => 'poker_meta',

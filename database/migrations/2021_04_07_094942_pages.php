@@ -28,6 +28,7 @@ class Pages extends Migration
             $table->string('keywords');
             $table->longText('content');
             $table->integer('lang')->default(1);
+            $table->longText('faq');
             $table->timestamp('create_at')->useCurrent();
             $table->timestamp('update_at')->useCurrent();
             $table->unique('permalink');
