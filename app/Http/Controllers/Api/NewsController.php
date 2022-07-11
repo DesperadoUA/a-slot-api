@@ -8,21 +8,19 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Posts;
 use App\Models\Relative;
-use App\Services\BonusService;
+use App\Services\NewsService;
 
-class BonusController extends PostController
+class NewsController extends PostController
 {
     public function __construct() {
-        $this->service = new BonusService();
+        $this->service = new NewsService();
     }
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         $response = [
             'body' => [],
             'confirm' => 'error'
@@ -69,10 +67,10 @@ class BonusController extends PostController
             'confirm' => 'error'
         ];
         $settings = [
-            'table' => $this->tables['BONUS'],
-            'table_meta' => $this->tables['BONUS_META'],
-            'table_category' => $this->tables['BONUS_CATEGORY'],
-            'table_relative' => $this->tables['BONUS_CATEGORY_RELATIVE']
+            'table' => $this->tables['VENDOR'],
+            'table_meta' => $this->tables['VENDOR_META'],
+            'table_category' => $this->tables['VENDOR_CATEGORY'],
+            'table_relative' => $this->tables['VENDOR_CATEGORY_RELATIVE']
         ];
         $category = new Category($settings);
         $data = $category->getPublicPostByUrl($id);
@@ -81,26 +79,14 @@ class BonusController extends PostController
             $response['body'] = self::dataCategoryCommonDecode($data[0]);
 
             $response['body']['posts'] = [];
-            $arr_posts = Relative::getPostIdByRelative($this->tables['BONUS_CATEGORY_RELATIVE'], $data[0]->id);
+            $arr_posts = Relative::getPostIdByRelative($this->tables['VENDOR_CATEGORY_RELATIVE'], $data[0]->id);
             if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['BONUS'], 'table_meta' => $this->tables['BONUS_META']]);
-                $response['body']['posts'] = CardBuilder::bonusCard($post->getPublicPostsByArrId($arr_posts));
+                $post = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
+                $response['body']['posts'] = CardBuilder::vendorCard($post->getPublicPostsByArrId($arr_posts));
             }
             $response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($response));
         }
         return response()->json($response);
-    }
-    protected static function dataMetaDecode($data){
-        $newData = [];
-        $newData['close'] = $data->close;
-        $newData['wager'] = $data->wager;
-        $newData['number_use'] = $data->number_use;
-        $newData['value_bonus'] = $data->value_bonus;
-
-        if(empty($data->ref)) $newData['ref'] = [];
-        else $newData['ref'] = json_decode($data->ref, true);
-
-        return $newData;
     }
 }

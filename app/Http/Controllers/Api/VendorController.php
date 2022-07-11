@@ -8,17 +8,19 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Posts;
 use App\Models\Relative;
+use App\Services\VendorService;
 
 class VendorController extends PostController
 {
-
+    public function __construct() {
+        $this->service = new VendorService();
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         $response = [
             'body' => [],
             'confirm' => 'error'
@@ -56,44 +58,8 @@ class VendorController extends PostController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        $post = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
-        $data = $post->getPublicPostByUrl($id);
-
-        if(!$data->isEmpty()) {
-            $response['body'] = $data[0];
-            $response['body'] = self::dataCommonDecode($data[0]) + self::dataMetaDecode($data[0]);
-
-            $response['body']['games'] = [];
-            $arr_posts = Relative::getPostIdByRelative($this->tables['GAME_VENDOR_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['GAME'], 'table_meta' => $this->tables['GAME_META']]);
-                $response['body']['games'] = CardBuilder::gameCard($post->getPublicPostsByArrId($arr_posts));
-            }
-
-            $response['body']['casino'] = [];
-            $arr_posts = Relative::getPostIdByRelative($this->tables['CASINO_VENDOR_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
-                $response['body']['casino'] = CardBuilder::casinoCard($post->getPublicPostsByArrId($arr_posts));
-            }
-
-            $response['body']['country'] = [];
-            $arr_posts = Relative::getRelativeByPostId($this->tables['VENDOR_COUNTRY_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['COUNTRY'], 'table_meta' => $this->tables['COUNTRY_META']]);
-                $response['body']['country'] = CardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
-            }
-
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+    public function show($id) {
+        return response()->json($this->service->show($id));
     }
     public function category($id){
         $response = [
@@ -122,14 +88,5 @@ class VendorController extends PostController
             Cash::store(url()->current(), json_encode($response));
         }
         return response()->json($response);
-    }
-    protected static function dataMetaDecode($data){
-        $newData = [];
-        $newData['year'] = $data->year;
-        $newData['rating'] = (int)$data->rating;
-        $newData['license'] = $data->license;
-        $newData['number_games'] = $data->number_games;
-
-        return $newData;
     }
 }

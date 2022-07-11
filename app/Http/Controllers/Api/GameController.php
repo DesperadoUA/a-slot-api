@@ -8,9 +8,13 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Posts;
 use App\Models\Relative;
+use App\Services\GameService;
 
 class GameController extends PostController
 {
+    public function __construct() {
+        $this->service = new GameService();
+    }
     const LIMIT_CASINO = 5;
     const LIMIT_GAMES = 5;
     /**
@@ -57,53 +61,8 @@ class GameController extends PostController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        $post = new Posts(['table' => $this->tables['GAME'], 'table_meta' => $this->tables['GAME_META']]);
-        $data = $post->getPublicPostByUrl($id);
-
-        if(!$data->isEmpty()) {
-            $response['body'] = $data[0];
-            $response['body'] = self::dataCommonDecode($data[0]) + self::dataMetaDecode($data[0]);
-
-            $casino = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
-            $settings = [
-                'lang'      => $data[0]->lang,
-                'limit'     => self::LIMIT_CASINO,
-                'order_key' => 'rating'
-            ];
-            $response['body']['casino'] = CardBuilder::casinoCard($casino->getPublicPosts($settings));
-            $cat_id = Relative::getRelativeByPostId($this->tables['GAME_CATEGORY_RELATIVE'], $data[0]->id);
-            $response['body']['games'] = [];
-            if(empty($cat_id)) {
-                $settings = [
-                    'lang'      => $data[0]->lang,
-                    'limit'     => self::LIMIT_GAMES,
-                    'order_key' => 'rating'
-                ];
-                $game_list = $post->getPublicPosts($settings);
-                $response['body']['games'] = CardBuilder::gameCard($game_list);
-            }
-            else {
-                $games_id = Relative::getPostIdByRelative($this->tables['GAME_CATEGORY_RELATIVE'], $cat_id[0]);
-                $response['body']['games'] = CardBuilder::gameCard($post->getPublicPosts($games_id));
-                $response['body']['games'] = array_slice($response['body']['games'], 0, self::LIMIT_GAMES);
-            }
-
-            $response['body']['vendor'] = [];
-            $vendor_id = Relative::getRelativeByPostId($this->tables['GAME_VENDOR_RELATIVE'], $data[0]->id);
-            if(!empty($vendor_id)) {
-                $vendor = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
-                $response['body']['vendor'] = CardBuilder::defaultCard($vendor->getPublicPostsByArrId($vendor_id));
-            }
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+    public function show($id) {
+        return response()->json($this->service->show($id));
     }
     public function category($id){
         $response = [

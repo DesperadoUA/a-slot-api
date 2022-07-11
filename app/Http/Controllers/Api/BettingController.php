@@ -8,12 +8,12 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Posts;
 use App\Models\Relative;
-use App\Services\BonusService;
+use App\Services\BettingService;
 
-class BonusController extends PostController
+class BettingController extends PostController
 {
     public function __construct() {
-        $this->service = new BonusService();
+        $this->service = new BettingService();
     }
 
     /**
@@ -68,6 +68,7 @@ class BonusController extends PostController
             'body' => [],
             'confirm' => 'error'
         ];
+        /*
         $settings = [
             'table' => $this->tables['BONUS'],
             'table_meta' => $this->tables['BONUS_META'],
@@ -89,18 +90,7 @@ class BonusController extends PostController
             $response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($response));
         }
+        */
         return response()->json($response);
-    }
-    protected static function dataMetaDecode($data){
-        $newData = [];
-        $newData['close'] = $data->close;
-        $newData['wager'] = $data->wager;
-        $newData['number_use'] = $data->number_use;
-        $newData['value_bonus'] = $data->value_bonus;
-
-        if(empty($data->ref)) $newData['ref'] = [];
-        else $newData['ref'] = json_decode($data->ref, true);
-
-        return $newData;
     }
 }
