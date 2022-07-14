@@ -46,4 +46,20 @@ class FrontBaseService
             : json_decode($data->faq, true);
         return $newData;
     }
+    protected static function dataDeserialize($data, $shemas) {
+        $newData = [];
+        foreach ($shemas as $key => $field) {
+            if($field['type'] === 'number') {
+                $newData[$key] = (int)$data->{$key};
+            }
+            elseif($field['type'] === 'string') {
+                $newData[$key] = $data->{$key};
+            }
+            elseif($field['type'] === 'json') {
+                if(empty($data->{$key})) $newData['exchange'] = [];
+                else $newData[$key] = json_decode($data->{$key}, true);
+            }
+        }
+        return $newData;
+    }
 }

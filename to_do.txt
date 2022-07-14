@@ -1,0 +1,8 @@
+Add Shemas
+[x] Casino
+[x] Bonus
+[x] Game
+[x] Poker
+[x] Betting
+[x] News
+[x] Vendor

@@ -13,7 +13,7 @@ class VendorService extends FrontBaseService {
     function __construct() {
         parent::__construct();
         $this->response = ['body' => [], 'confirm' => 'error'];
-        $this->config = config('constants.PAGES');
+        $this->shemas = config('shemas.VENDOR');
     }
     public function show($id) {
         $post = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
@@ -21,7 +21,7 @@ class VendorService extends FrontBaseService {
 
         if(!$data->isEmpty()) {
             $this->response['body'] = $data[0];
-            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataMetaDecode($data[0]);
+            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataDeserialize($data[0], $this->shemas);
 
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
@@ -56,11 +56,5 @@ class VendorService extends FrontBaseService {
         }
         */
         return response()->json($response);
-    }
-    protected static function dataMetaDecode($data){
-        $newData = [];
-        $newData['rating'] = (int)$data->rating;
-
-        return $newData;
     }
 }

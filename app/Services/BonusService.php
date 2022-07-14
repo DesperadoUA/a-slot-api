@@ -13,7 +13,7 @@ class BonusService extends FrontBaseService {
     function __construct() {
         parent::__construct();
         $this->response = ['body' => [], 'confirm' => 'error'];
-        $this->config = config('constants.PAGES');
+        $this->shemas = config('shemas.BONUS');
     }
     public function show($id) {
         $post = new Posts(['table' => $this->tables['BONUS'], 'table_meta' => $this->tables['BONUS_META']]);
@@ -21,7 +21,7 @@ class BonusService extends FrontBaseService {
 
         if(!$data->isEmpty()) {
             $this->response['body'] = $data[0];
-            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataMetaDecode($data[0]);
+            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataDeserialize($data[0], $this->shemas);
 
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
@@ -56,14 +56,5 @@ class BonusService extends FrontBaseService {
         }
         */
         return response()->json($response);
-    }
-    protected static function dataMetaDecode($data){
-        $newData = [];
-        $newData['rating'] = (int)$data->rating;
-        
-        if(empty($data->ref)) $newData['ref'] = [];
-        else $newData['ref'] = json_decode($data->ref, true);
-
-        return $newData;
     }
 }
