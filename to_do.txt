@@ -1,4 +1,4 @@
-Add Shemas
+Add admin Shemas
 [x] Casino
 [x] Bonus
 [x] Game

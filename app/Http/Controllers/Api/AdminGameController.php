@@ -1,30 +1,14 @@
 <?php
-
-
 namespace App\Http\Controllers\Api;
-
 use Illuminate\Http\Request;
-use App\Models\Posts;
-use App\Validate;
-use App\Models\Cash;
+use App\Services\AdminGameService;
 
 class AdminGameController extends BaseController
 {
-    const POST_TYPE = 'game';
-    const MAIN_TABLE = 'games';
-    const META_TABLE = 'game_meta';
-    const CATEGORY_TABLE = 'game_category';
-    const CATEGORY_RELATIVE = 'game_category_relative';
-    const VENDOR_TABLE = 'vendors';
-
-    public function index(Request $request)
-    {
-        $response = [
-            'body' => [],
-            'confirm' => 'ok'
-        ];
-
-        $posts = new Posts(['table' => self::MAIN_TABLE, 'table_meta' => self::META_TABLE]);
+    public function __construct() {
+        $this->service = new AdminGameService();
+    }
+    public function index(Request $request) {
         $settings = [
             'offset' => $request->has('offset') ? $request->input('offset') : self::OFFSET,
             'limit' => $request->has('limit') ? $request->input('limit') : self::LIMIT,
@@ -32,102 +16,18 @@ class AdminGameController extends BaseController
             'order_key' => $request->has('order_key') ? $request->input('order_key') : self::ORDER_KEY,
             'lang' => $request->has('lang') ? $request->input('lang') : self::LANG
         ];
-        $arrPosts = $posts->getPosts($settings);
-        $data = [];
-        foreach ($arrPosts as $item) {
-            $data[] = self::dataCommonDecode($item) + self::dataMetaDecode($item);
-        }
-        $response['body'] = $data;
-        $response['total'] = $posts->getTotalCountByLang($settings['lang']);
-        $response['lang'] = config('constants.LANG')[$settings['lang']];
-
-        return response()->json($response);
-
+        return response()->json($this->service->adminIndex($settings));
     }
-
-    public function store(Request $request)
-    {
-        $response = [
-            'body' => [],
-            'confirm' => 'ok'
-        ];
-        $data_save = self::dataValidateInsert($request->input('data'), self::MAIN_TABLE, self::META_TABLE);
-        $data_meta = self::dataValidateMetaSave($request->input('data'));
-        $post = new Posts(['table' => self::MAIN_TABLE, 'table_meta' => self::META_TABLE]);
-        $response['insert_id'] = $post->insert($data_save, $data_meta);
-        $response['data_meta'] = $data_meta;
-
-        return response()->json($response);
+    public function store(Request $request) {
+        return response()->json($this->service->store($request->input('data')));
     }
-
-    public function show($id)
-    {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $post = new Posts(['table' => self::MAIN_TABLE, 'table_meta' => self::META_TABLE]);
-        $data = $post->getPostById($id);
-        if (!empty(count($data))) {
-            $response['body'] = self::dataCommonDecode($data[0]) + self::dataMetaDecode($data[0]);
-            $response['body']['category'] = self::relativeCategoryPost($id, self::MAIN_TABLE,
-                                                                         self::CATEGORY_TABLE,
-                                                                          self::CATEGORY_RELATIVE);
-            $response['confirm'] = 'ok';
-        }
-
-        return response()->json($response);
+    public function show($id) {
+        return response()->json($this->service->adminShow($id));
     }
-
-    public function update(Request $request)
-    {
-        $response = [
-            'body' => [],
-            'confirm' => 'ok'
-        ];
-
-        $data_request = $request->input('data');
-        $data_save = self::dataValidateSave($data_request['id'], $request->input('data'), self::MAIN_TABLE, self::META_TABLE);
-        $post = new Posts(['table' => self::MAIN_TABLE, 'table_meta' => self::META_TABLE]);
-        $post->updateById($data_request['id'], $data_save);
-
-        $data_meta = self::dataValidateMetaSave($data_request);
-        $post->updateMetaById($data_request['id'], $data_meta);
-        self::updateCategory($data_request['id'], $data_request['category'], self::MAIN_TABLE,
-                                                                          self::CATEGORY_TABLE,
-                                                                           self::CATEGORY_RELATIVE);
-        Cash::deleteAll();
-        return response()->json($response);
+    public function update(Request $request) {
+        return response()->json($this->service->update($request->input('data')));
     }
-
     public function delete(Request $request) {
-        $response = [
-            'body' => [],
-            'confirm' => 'ok'
-        ];
-        $post = new Posts(['table' => self::MAIN_TABLE, 'table_meta' => self::META_TABLE]);
-        $post->deleteById($request->input('data'));
-        return response()->json($response);
-    }
-
-    protected static function dataValidateMetaSave($data)
-    {
-        $newData = [];
-
-        if (isset($data['iframe'])) {
-            $newData['iframe'] = $data['iframe'];
-        }
-        else {
-            $newData['iframe'] = '';
-        }
-        return $newData;
-    }
-
-    protected static function dataMetaDecode($data)
-    {
-        $newData = [];
-        $newData['iframe'] = $data->iframe;
-        return $newData;
+        return response()->json($this->service->delete($request->input('data')));
     }
 }
