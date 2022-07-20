@@ -3,6 +3,7 @@ namespace App\Services;
 use App\Models\Posts;
 use App\Services\BaseService;
 use App\Models\Cash;
+use App\Serialize\PostSerialize;
 
 class AdminPokerService extends BaseService {
     const SLUG = 'poker';
@@ -10,15 +11,14 @@ class AdminPokerService extends BaseService {
         parent::__construct();
         $this->response = ['body' => [], 'confirm' => 'error'];
         $this->shemas = config('shemas.POKER');
+        $this->serialize = new PostSerialize();
     }
    
     public function adminIndex($settings) {
         $posts = new Posts(['table' => $this->tables['POKER'], 'table_meta' => $this->tables['POKER_META']]);
         $arrPosts = $posts->getPosts($settings);
         $data = [];
-        foreach ($arrPosts as $item) {
-            $data[] = self::dataCommonDecode($item);
-        }
+        foreach ($arrPosts as $item) $data[] = $this->serialize->adminSerialize($item, $this->shemas);
         $this->response['body'] = $data;
         $this->response['confirm'] = 'ok';
         $this->response['total'] = $posts->getTotalCountByLang($settings['lang']);
@@ -26,8 +26,8 @@ class AdminPokerService extends BaseService {
         return $this->response;
     }
     public function store($data) {
-        $data_save = self::dataCommonValidateInsert($data, $this->tables['POKER'], $this->tables['POKER_META']);
-        $data_meta = self::dataValidateMetaSave($data, $this->shemas);
+        $data_save = $this->serialize->validateInsert($data, $this->tables['POKER'], $this->tables['POKER_META']);
+        $data_meta = $this->serialize->validateMetaSave($data, $this->shemas);
         $post = new Posts(['table' => $this->tables['POKER'], 'table_meta' => $this->tables['POKER_META']]);
         $this->response['insert_id'] = $post->insert($data_save, $data_meta);
         $this->response['confirm'] = 'ok';
@@ -37,7 +37,7 @@ class AdminPokerService extends BaseService {
         $post = new Posts(['table' => $this->tables['POKER'], 'table_meta' => $this->tables['POKER_META']]);
         $data = $post->getPostById($id);
         if (!empty(count($data))) {
-            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataMetaDecode($data[0], $this->shemas);
+            $this->response['body'] = $this->serialize->adminSerialize($data[0], $this->shemas);
             $this->response['body']['category'] = self::relativeCategoryPost($id, $this->tables['POKER'], 
                                                                                   $this->tables['POKER_CATEGORY'], 
                                                                                   $this->tables['POKER_CATEGORY_RELATIVE']);
@@ -46,11 +46,11 @@ class AdminPokerService extends BaseService {
         return $this->response;
     }
     public function update($data) {
-        $data_save = self::dataValidateSavePosts($data['id'], $data, $this->tables['POKER'], $this->tables['POKER_META']);
+        $data_save = $this->serialize->validateUpdate($data, $this->tables['POKER'], $this->tables['POKER_META']);
         $post = new Posts(['table' => $this->tables['POKER'], 'table_meta' => $this->tables['POKER_META']]);
         $post->updateById($data['id'], $data_save);
 
-        $data_meta = self::dataValidateMetaSave($data, $this->shemas);
+        $data_meta = $this->serialize->validateMetaSave($data, $this->shemas);
         $post->updateMetaById($data['id'], $data_meta);
         self::updateCategory($data['id'], $data['category'], $this->tables['POKER'], 
                                                              $this->tables['POKER_CATEGORY'], 
@@ -65,14 +65,5 @@ class AdminPokerService extends BaseService {
         $this->response['confirm'] = 'ok';
         Cash::deleteAll();
         return $this->response;
-    }
-    protected static function dataMetaDecode($data, $shemas) {
-        $newData = self::dataDeserialize($data, $shemas);  
-        return $newData;
-    }
-    protected static function dataCommonValidateInsert($data, $main_table, $meta_table) {
-       $newData = parent::dataCommonValidateInsert($data, $main_table, $meta_table);
-       $newData['slug'] = isset($data['slug']) ? $data['slug'] : self::SLUG;
-       return $newData;
     }
 }

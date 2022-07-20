@@ -1,4 +1,4 @@
-Add admin Shemas
+Add services for category
 [x] Casino
 [x] Bonus
 [x] Game

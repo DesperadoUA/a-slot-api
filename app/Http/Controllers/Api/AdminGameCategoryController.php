@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use App\Models\Cash;
+use App\Services\AdminGameCategoryService;
 
 class AdminGameCategoryController extends BaseController
 {
@@ -15,20 +16,10 @@ class AdminGameCategoryController extends BaseController
     const META_TABLE = 'game_meta';
     const CATEGORY_TABLE = 'game_category';
     const RELATIVE_TABLE = 'game_category_relative';
-
+    public function __construct() {
+        $this->service = new AdminGameCategoryService();
+    }
     public function index(Request $request) {
-        $response = [
-            'body' => [],
-            'confirm' => 'ok'
-        ];
-
-        $category = new Category([
-                'table' => self::MAIN_TABLE,
-                'table_meta' => self::META_TABLE,
-                'table_category' => self::CATEGORY_TABLE,
-                'table_relative' => self::RELATIVE_TABLE
-            ]
-        );
         $settings = [
             'offset' => $request->has('offset') ? $request->input('offset') : self::OFFSET,
             'limit' => $request->has('limit') ? $request->input('limit') : self::LIMIT,
@@ -36,17 +27,7 @@ class AdminGameCategoryController extends BaseController
             'order_key' => $request->has('order_key') ? $request->input('order_key') : self::ORDER_KEY,
             'lang' => $request->has('lang') ? $request->input('lang') : self::LANG
         ];
-        $arrPosts = $category->getPosts($settings);
-        $data = [];
-        foreach ($arrPosts as $item) {
-            $data[] = self::dataCommonDecode($item);
-        }
-        $response['body'] = $data;
-        $response['total'] = $category->getTotalCountByLang($settings['lang']);
-        $response['lang'] = config('constants.LANG')[$settings['lang']];
-
-        return response()->json($response);
-
+        return response()->json($this->service->adminIndex($settings));
     }
     public function store(Request $request) {
         $response = [
@@ -61,26 +42,7 @@ class AdminGameCategoryController extends BaseController
         return response()->json($response);
     }
     public function show($id) {
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-
-        $category = new Category([
-                'table' => self::MAIN_TABLE,
-                'table_meta' => self::META_TABLE,
-                'table_category' => self::CATEGORY_TABLE,
-                'table_relative' => self::RELATIVE_TABLE
-            ]
-        );
-        $data = $category->getPostById($id);
-        if (!empty(count($data))) {
-            $response['body'] = self::dataCommonDecode($data[0]);
-            $response['body']['relative_category'] = self::relativeCategory($data[0]->id);
-            $response['confirm'] = 'ok';
-        }
-
-        return response()->json($response);
+        return response()->json($this->service->adminShow($id));
     }
     public function update(Request $request){
         $response = [
@@ -119,30 +81,5 @@ class AdminGameCategoryController extends BaseController
             ? []
             : json_decode($data->faq, true);
         return $newData;
-    }
-    protected static function relativeCategory($id) {
-        $data = [];
-        $post = new Category([
-            'table' => self::MAIN_TABLE,
-            'table_meta' => self::META_TABLE,
-            'table_category' => self::CATEGORY_TABLE,
-            'table_relative' => self::RELATIVE_TABLE
-        ]);
-        $current_post = $post->getPostById($id);
-        if($current_post->isEmpty()) {
-            return $data;
-        }
-        else {
-            $arr_title_category = [];
-            $list_category = $post->getAllPostsByLang($current_post[0]->lang);
-            if(!$list_category->isEmpty()) {
-                foreach ($list_category as $item) $arr_title_category[] = $item->title;
-            }
-            $data['all_value'] = $arr_title_category;
-            $parent_category = $post->getPostById($current_post[0]->parent_id);
-            if($parent_category->isEmpty()) $data['current_value'] = [];
-            else $data['current_value'][] = $parent_category[0]->title;
-            return $data;
-        }
     }
 }
