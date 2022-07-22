@@ -2,11 +2,17 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Services\AdminGameCategoryService;
+use App\Services\AdminCategoryService;
 
 class AdminGameCategoryController extends BaseController {
     public function __construct() {
-        $this->service = new AdminGameCategoryService();
+        parent::__construct();
+        $this->service = new AdminCategoryService([
+            'table' => $this->tables['GAME'],
+            'table_meta' => $this->tables['GAME_META'],
+            'table_category' => $this->tables['GAME_CATEGORY'],
+            'table_relative' => $this->tables['GAME_CATEGORY_RELATIVE'],
+        ]);
     }
     public function index(Request $request) {
         $settings = [

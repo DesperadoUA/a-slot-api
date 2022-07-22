@@ -1,11 +1,17 @@
 <?php
 namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
-use App\Services\AdminCasinoCategoryService;
+use App\Services\AdminCategoryService;
 
 class AdminCasinoCategoryController extends BaseController {
     public function __construct() {
-        $this->service = new AdminCasinoCategoryService();
+        parent::__construct();
+        $this->service = new AdminCategoryService([
+            'table' => $this->tables['CASINO'],
+            'table_meta' => $this->tables['CASINO_META'],
+            'table_category' => $this->tables['CASINO_CATEGORY'],
+            'table_relative' => $this->tables['CASINO_CATEGORY_RELATIVE']
+        ]);
     }
     public function index(Request $request) {
         $settings = [

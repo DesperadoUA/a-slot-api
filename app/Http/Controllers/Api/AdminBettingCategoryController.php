@@ -2,11 +2,17 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Services\AdminBettingCategoryService;
+use App\Services\AdminCategoryService;
 
 class AdminBettingCategoryController extends BaseController {
     public function __construct() {
-        $this->service = new AdminBettingCategoryService();
+        parent::__construct();
+        $this->service = new AdminCategoryService([
+            'table' => $this->tables['BETTING'],
+            'table_meta' => $this->tables['BETTING_META'],
+            'table_category' => $this->tables['BETTING_CATEGORY'],
+            'table_relative' => $this->tables['BETTING_CATEGORY_RELATIVE'],
+        ]);
     }
     public function index(Request $request) {
         $settings = [

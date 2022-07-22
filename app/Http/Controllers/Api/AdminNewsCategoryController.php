@@ -1,11 +1,17 @@
 <?php
 namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
-use App\Services\AdminNewsCategoryService;
+use App\Services\AdminCategoryService;
 
 class AdminNewsCategoryController extends BaseController {
     public function __construct() {
-        $this->service = new AdminNewsCategoryService();
+        parent::__construct();
+        $this->service = new AdminCategoryService([
+            'table' => $this->tables['NEWS'],
+            'table_meta' => $this->tables['NEWS_META'],
+            'table_category' => $this->tables['NEWS_CATEGORY'],
+            'table_relative' => $this->tables['NEWS_CATEGORY_RELATIVE'],
+        ]);
     }
     public function index(Request $request) {
         $settings = [

@@ -2,11 +2,17 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Services\AdminPokerCategoryService;
+use App\Services\AdminCategoryService;
 
 class AdminPokerCategoryController extends BaseController {
     public function __construct() {
-        $this->service = new AdminPokerCategoryService();
+        parent::__construct();
+        $this->service = new AdminCategoryService([
+            'table' => $this->tables['POKER'],
+            'table_meta' => $this->tables['POKER_META'],
+            'table_category' => $this->tables['POKER_CATEGORY'],
+            'table_relative' => $this->tables['POKER_CATEGORY_RELATIVE'],
+        ]);
     }
     public function index(Request $request) {
         $settings = [

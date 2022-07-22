@@ -1,11 +1,17 @@
 <?php
 namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
-use App\Services\AdminVendorCategoryService;
+use App\Services\AdminCategoryService;
 
 class AdminVendorCategoryController extends BaseController {
     public function __construct() {
-        $this->service = new AdminVendorCategoryService();
+        parent::__construct();
+        $this->service = new AdminCategoryService([
+            'table' => $this->tables['VENDOR'],
+            'table_meta' => $this->tables['VENDOR_META'],
+            'table_category' => $this->tables['VENDOR_CATEGORY'],
+            'table_relative' => $this->tables['VENDOR_CATEGORY_RELATIVE'],
+        ]);
     }
     public function index(Request $request) {
         $settings = [

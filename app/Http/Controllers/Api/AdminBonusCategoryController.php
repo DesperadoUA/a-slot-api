@@ -2,11 +2,17 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Services\AdminBonusCategoryService;
+use App\Services\AdminCategoryService;
 
 class AdminBonusCategoryController extends BaseController {
     public function __construct() {
-        $this->service = new AdminBonusCategoryService();
+        parent::__construct();
+        $this->service = new AdminCategoryService([
+            'table' => $this->tables['BONUS'],
+            'table_meta' => $this->tables['BONUS_META'],
+            'table_category' => $this->tables['BONUS_CATEGORY'],
+            'table_relative' => $this->tables['BONUS_CATEGORY_RELATIVE']
+        ]);
     }
     public function index(Request $request) {
         $settings = [
