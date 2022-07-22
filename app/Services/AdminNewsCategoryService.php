@@ -4,6 +4,7 @@ use App\Models\Category;
 use App\Services\BaseService;
 use App\Models\Cash;
 use App\Serialize\CategorySerialize;
+use Illuminate\Support\Facades\DB;
 
 class AdminNewsCategoryService extends BaseService {
     function __construct() {
@@ -37,6 +38,29 @@ class AdminNewsCategoryService extends BaseService {
             $this->response['body']['relative_category'] = self::relativeCategory($data[0]->id,  $this->configTables);
             $this->response['confirm'] = 'ok';
         }
+        return $this->response;
+    }
+    public function update($data) {
+        $data_save = self::dataValidateCategorySave($data['id'], $data,$this->configTables['table_category'])
+                   + self::checkParentCategorySave($data, $this->configTables['table_category']);
+        $category = new Category($this->configTables);
+        $category->updateById($data['id'], $data_save);
+        Cash::deleteAll();
+        $this->response['confirm'] = 'ok';
+        return $this->response;
+    }
+    public function store($data) {
+        $data_save = self::dataValidateCategoryInsert($data, $this->configTables['table_category'])
+                           + self::checkParentCategorySave($data, $this->configTables['table_category']);
+        $this->response['insert_id'] = DB::table($this->configTables['table_category'])->insertGetId($data_save);
+        $this->response['confirm'] = 'ok';
+        return $this->response;
+    }
+    public function delete($id) {
+        DB::table($this->configTables['table_category'])->where('id', $id)->delete();
+        DB::table($this->configTables['table_category'])->where('parent_id', $id)->update(['parent_id' => 0]);
+        Cash::deleteAll();
+        $this->response['confirm'] = 'ok';
         return $this->response;
     }
 }

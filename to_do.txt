@@ -1,8 +1,8 @@
-Add services for category
+Add services store for category
 [x] Casino
 [x] Bonus
 [x] Game
 [x] Poker
 [x] Betting
 [x] News
-[x] Vendor
+[] Vendor
