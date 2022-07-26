@@ -23,7 +23,7 @@ class PageService extends BaseService {
         $data = $post->getPublicPostByUrl('/');
         if(!$data->isEmpty()) {
 
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $casino = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
             $settings = [
                 'lang'      => $data[0]->lang,
@@ -41,7 +41,7 @@ class PageService extends BaseService {
         $data = $post->getPublicPostByUrl($this->config['CASINO']);
         if(!$data->isEmpty()) {
             $casino = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $settings = [
                 'lang'      => $data[0]->lang,
                 'limit'     => self::CATEGORY_LIMIT_CASINO,
@@ -57,7 +57,7 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['BONUS']);
         if(!$data->isEmpty()) {
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -67,7 +67,7 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['VENDOR']);
         if(!$data->isEmpty()) {
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -77,7 +77,7 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['PAYMENT']);
         if(!$data->isEmpty()) {
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -87,7 +87,7 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['POKER']);
         if(!$data->isEmpty()) {
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -97,7 +97,7 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['NEWS']);
         if(!$data->isEmpty()) {
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -107,7 +107,7 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['BETTING']);
         if(!$data->isEmpty()) {
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -118,7 +118,7 @@ class PageService extends BaseService {
         $data = $post->getPublicPostByUrl($this->config['GAME']);
         if(!$data->isEmpty()) {
             $game = new Posts(['table' => $this->tables['GAME'], 'table_meta' => $this->tables['GAME_META']]);
-            $this->response['body'] = self::dataCommonDecode($data[0]);
+            $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $settings = [
                 'lang'      => $data[0]->lang,
                 'limit'     => self::CATEGORY_LIMIT_GAME
