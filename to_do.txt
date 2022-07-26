@@ -1,4 +1,4 @@
-Add common service for category
+Add AdminPostController 
 [x] Casino
 [x] Bonus
 [x] Game
@@ -6,4 +6,3 @@ Add common service for category
 [x] Betting
 [x] News
 [x] Vendor
-
