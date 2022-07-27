@@ -62,31 +62,6 @@ class NewsController extends PostController
         return response()->json($this->service->show($id));
     }
     public function category($id){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        $settings = [
-            'table' => $this->tables['VENDOR'],
-            'table_meta' => $this->tables['VENDOR_META'],
-            'table_category' => $this->tables['VENDOR_CATEGORY'],
-            'table_relative' => $this->tables['VENDOR_CATEGORY_RELATIVE']
-        ];
-        $category = new Category($settings);
-        $data = $category->getPublicPostByUrl($id);
-        if(!$data->isEmpty()) {
-            $response['body'] = $data[0];
-            $response['body'] = self::dataCategoryCommonDecode($data[0]);
-
-            $response['body']['posts'] = [];
-            $arr_posts = Relative::getPostIdByRelative($this->tables['VENDOR_CATEGORY_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
-                $response['body']['posts'] = CardBuilder::vendorCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
+        return response()->json($this->service->category($id));
     }
 }

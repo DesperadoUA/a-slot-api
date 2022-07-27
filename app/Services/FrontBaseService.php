@@ -1,7 +1,10 @@
 <?php
 namespace App\Services;
-
-use Illuminate\Http\Request;
+use App\CardBuilder\CasinoCardBuilder;
+use App\Models\Category;
+use App\Models\Relative;
+use App\Models\Posts;
+use App\Models\Cash;
 
 class FrontBaseService
 {
@@ -14,6 +17,14 @@ class FrontBaseService
 
     public function __construct() {
         $this->tables = config('tables');
+        $this->cardBuilder = new CasinoCardBuilder();
+        $this->configTables =  [
+            'table' => $this->tables['CASINO'],
+            'table_meta' => $this->tables['CASINO_META'],
+            'table_category' => $this->tables['CASINO_CATEGORY'],
+            'table_relative' => $this->tables['CASINO_CATEGORY_RELATIVE']
+        ];
+        $this->cardBuilder = new CasinoCardBuilder();
     }
     protected static function dataCommonDecode($data) {
         $newData = [];
@@ -61,5 +72,23 @@ class FrontBaseService
             }
         }
         return $newData;
+    }
+    public function category($id){
+        $category = new Category($this->configTables);
+        $data = $category->getPublicPostByUrl($id);
+        if(!$data->isEmpty()) {
+            $this->response['body'] = $data[0];
+            $this->response['body'] = self::dataCategoryCommonDecode($data[0]);
+
+            $this->response['body']['posts'] = [];
+            $arr_posts = Relative::getPostIdByRelative($this->configTables['table_relative'], $data[0]->id);
+            if(!empty($arr_posts)) {
+                $post = new Posts(['table' => $this->configTables['table'], 'table_meta' => $this->configTables['table_meta']]);
+                $this->response['body']['posts'] = $this->cardBuilder->main($post->getPublicPostsByArrId($arr_posts));
+            }
+            $this->response['confirm'] = 'ok';
+            Cash::store(url()->current(), json_encode($this->response));
+        }
+        return $this->response;
     }
 }

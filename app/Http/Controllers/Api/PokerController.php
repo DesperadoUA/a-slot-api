@@ -64,27 +64,7 @@ class PokerController extends PostController
     public function show($id) {
         return response()->json($this->service->show($id));
     }
-    protected static function dataMetaDecode($data){
-        $newData = [];
-        $newData['rating'] = (int)$data->rating;
-        $newData['phone'] = $data->phone;
-        $newData['min_deposit'] = $data->min_deposit;
-        $newData['min_payments'] = $data->min_payments;
-        $newData['email'] = $data->email;
-        $newData['year'] = $data->year;
-        $newData['site'] = $data->site;
-        $newData['withdrawal'] = $data->withdrawal;
-        $newData['rakeback'] = $data->rakeback;
-
-        if(empty($data->faq)) $newData['faq'] = [];
-        else $newData['faq'] = json_decode($data->faq, true);
-
-        if(empty($data->ref)) $newData['ref'] = [];
-        else $newData['ref'] = json_decode($data->ref, true);
-
-        if(empty($data->reviews)) $newData['reviews'] = [];
-        else $newData['reviews'] = json_decode($data->reviews, true);
-
-        return $newData;
+    public function category($id){
+        return response()->json($this->service->category($id));
     }
 }

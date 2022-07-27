@@ -3,6 +3,7 @@ use Illuminate\Http\Request;
 
 Route::namespace('Api')->group(function () {
     Route::get('betting/{id}', 'BettingController@show')->middleware('cash');
+    Route::get('bettings/{id}', 'BettingController@category')->middleware('cash');
 
     Route::post('admin/bettings', 'AdminBettingController@index')->middleware('api_auth');
     Route::post('admin/betting/update', 'AdminBettingController@update')->middleware('api_auth');

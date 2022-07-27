@@ -1,10 +1,8 @@
 <?php
 namespace App\Services;
 use App\Models\Posts;
-use App\Models\Category;
-use App\Models\Relative;
 use App\Services\FrontBaseService;
-use App\CardBuilder;
+use App\CardBuilder\BettingCardBuilder;
 use App\Models\Cash;
 
 class BettingService extends FrontBaseService {
@@ -14,6 +12,13 @@ class BettingService extends FrontBaseService {
         parent::__construct();
         $this->response = ['body' => [], 'confirm' => 'error'];
         $this->shemas = config('shemas.BETTING');
+        $this->configTables =  [
+            'table' => $this->tables['BETTING'],
+            'table_meta' => $this->tables['BETTING_META'],
+            'table_category' => $this->tables['BETTING_CATEGORY'],
+            'table_relative' => $this->tables['BETTING_CATEGORY_RELATIVE']
+        ];
+        $this->cardBuilder = new BettingCardBuilder();
     }
     public function show($id) {
         $post = new Posts(['table' => $this->tables['BETTING'], 'table_meta' => $this->tables['BETTING_META']]);
@@ -27,34 +32,5 @@ class BettingService extends FrontBaseService {
             Cash::store(url()->current(), json_encode($this->response));
         }
         return $this->response;
-    }
-    public function _category($id){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        /*$settings = [
-            'table' => $this->tables['CASINO'],
-            'table_meta' => $this->tables['CASINO_META'],
-            'table_category' => $this->tables['CASINO_CATEGORY'],
-            'table_relative' => $this->tables['CASINO_CATEGORY_RELATIVE']
-        ];
-        $category = new Category($settings);
-        $data = $category->getPublicPostByUrl($id);
-        if(!$data->isEmpty()) {
-            $response['body'] = $data[0];
-            $response['body'] = self::dataCategoryCommonDecode($data[0]);
-
-            $response['body']['posts'] = [];
-            $arr_posts = Relative::getPostIdByRelative($this->tables['CASINO_CATEGORY_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
-                $response['body']['posts'] = CardBuilder::casinoCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        */
-        return response()->json($response);
     }
 }

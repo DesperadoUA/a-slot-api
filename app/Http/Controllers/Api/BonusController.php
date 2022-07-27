@@ -1,13 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
-use App\CardBuilder;
-use App\Models\Cash;
-use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Models\Posts;
-use App\Models\Relative;
 use App\Services\BonusService;
 
 class BonusController extends PostController
@@ -64,43 +58,6 @@ class BonusController extends PostController
         return response()->json($this->service->show($id));
     }
     public function category($id){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        $settings = [
-            'table' => $this->tables['BONUS'],
-            'table_meta' => $this->tables['BONUS_META'],
-            'table_category' => $this->tables['BONUS_CATEGORY'],
-            'table_relative' => $this->tables['BONUS_CATEGORY_RELATIVE']
-        ];
-        $category = new Category($settings);
-        $data = $category->getPublicPostByUrl($id);
-        if(!$data->isEmpty()) {
-            $response['body'] = $data[0];
-            $response['body'] = self::dataCategoryCommonDecode($data[0]);
-
-            $response['body']['posts'] = [];
-            $arr_posts = Relative::getPostIdByRelative($this->tables['BONUS_CATEGORY_RELATIVE'], $data[0]->id);
-            if(!empty($arr_posts)) {
-                $post = new Posts(['table' => $this->tables['BONUS'], 'table_meta' => $this->tables['BONUS_META']]);
-                $response['body']['posts'] = CardBuilder::bonusCard($post->getPublicPostsByArrId($arr_posts));
-            }
-            $response['confirm'] = 'ok';
-            Cash::store(url()->current(), json_encode($response));
-        }
-        return response()->json($response);
-    }
-    protected static function dataMetaDecode($data){
-        $newData = [];
-        $newData['close'] = $data->close;
-        $newData['wager'] = $data->wager;
-        $newData['number_use'] = $data->number_use;
-        $newData['value_bonus'] = $data->value_bonus;
-
-        if(empty($data->ref)) $newData['ref'] = [];
-        else $newData['ref'] = json_decode($data->ref, true);
-
-        return $newData;
+        return response()->json($this->service->category($id));
     }
 }

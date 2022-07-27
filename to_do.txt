@@ -1,4 +1,4 @@
-Add AdminPostController 
+Create CardBuilder for posts
 [x] Casino
 [x] Bonus
 [x] Game

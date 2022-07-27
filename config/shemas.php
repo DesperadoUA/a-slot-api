@@ -46,29 +46,29 @@ return [
             'default' => []
         ]
         ],
-        'BONUS' => [
-            'rating' => [
+    'BONUS' => [
+        'rating' => [
                 'type' => 'number',
                 'default' => 0
             ],
-            'ref' => [
+        'ref' => [
                 'type' => 'json',
                 'default' => []
             ]
         ],
-        'GAME' => [
+    'GAME' => [
             'iframe' => [
                 'type' => 'string',
                 'default' => ''
             ]
         ],
-        'POKER' => [
+    'POKER' => [
             'faq' => [
                 'type' => 'json',
                 'default' => []
             ],
         ],
-        'BETTING' => [
+    'BETTING' => [
             'rating' => [
                 'type' => 'number',
                 'default' => 0
@@ -78,16 +78,16 @@ return [
                 'default' => []
             ]
         ],
-        'NEWS' => [
+    'NEWS' => [
             'autor' => [
                 'type' => 'string',
                 'default' => ''
             ]
         ],
-        'VENDOR' => [
+    'VENDOR' => [
             'rating' => [
                 'type' => 'number',
                 'default' => 0
             ]
-        ]
+    ]
 ];

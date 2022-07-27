@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Posts;
-use App\CardBuilder;
+use App\CardBuilder\AdminCardBuilder;
 class AdminSearchController extends Controller
 {
     const LANG = 1;
@@ -14,8 +14,9 @@ class AdminSearchController extends Controller
         $lang = $request->has('lang') ?  $request->input('lang') : self::LANG;
         $post_type = $request->has('postType') ?  $request->input('postType') : self::POST_TYPE;
         $str = $request->has('searchWord') ?  $request->input('searchWord') : '';
+        $cardBuilder = new AdminCardBuilder();
         $response = [
-            'body' => CardBuilder::searchAdminCard(Posts::searchByTitle($lang, $post_type, $str)),
+            'body' => $cardBuilder->main(Posts::searchByTitle($lang, $post_type, $str)),
             'confirm' => 'ok'
         ];
         return response()->json($response);

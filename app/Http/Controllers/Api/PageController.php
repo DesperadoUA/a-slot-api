@@ -61,69 +61,6 @@ class PageController extends Controller
     public function bettings(){
         return response()->json($this->service->bettings());
     }
-    public function search(Request $request){
-        $response = [
-            'body' => [],
-            'confirm' => 'error'
-        ];
-        if($request->has('search_word')){
-            $lang = $request->has('lang') ? $request->input('lang') : self::LANG;
-            $response['body']['posts'] = CardBuilder::searchCard(
-                                             Posts::searchPublicByTitle($lang, $this->tables['CASINO'],
-                                             $request->input('search_word'))
-            );
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                    CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['BONUS'],
-                    $request->input('search_word'))
-            ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['POKER'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['GAME'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['COUNTRY'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['CURRENCY'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['LANGUAGE'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['LICENSE'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['PAYMENT'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['TECHNOLOGY'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['TYPE_PAYMENT'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['VENDOR'],
-                    $request->input('search_word'))
-                ));
-            $response['body']['posts'] = array_merge($response['body']['posts'],
-                CardBuilder::searchCard(Posts::searchPublicByTitle($lang, $this->tables['TYPE_BONUS'],
-                    $request->input('search_word'))
-                ));
-            $response['confirm'] = 'ok';
-        }
-        return response()->json($response);
-    }
     public function siteMap(){
         $response = [
             'body' => [],

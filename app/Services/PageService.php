@@ -2,10 +2,11 @@
 namespace App\Services;
 use App\Models\Posts;
 use App\Models\Pages;
-use App\CardBuilder;
 use App\Serialize\PageSerialize;
 use App\Services\BaseService;
 use App\Models\Cash;
+use App\CardBuilder\CasinoCardBuilder;
+use App\CardBuilder\GameCardBuilder;
 class PageService extends BaseService {
     protected $response;
     protected $config;
@@ -22,7 +23,7 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl('/');
         if(!$data->isEmpty()) {
-
+            $casinoCardBuilder = new CasinoCardBuilder();
             $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $casino = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
             $settings = [
@@ -30,7 +31,7 @@ class PageService extends BaseService {
                 'limit'     => self::MAIN_PAGE_LIMIT_CASINO,
                 'order_key' => 'rating'
             ];
-            $this->response['body']['casino'] = CardBuilder::casinoCard($casino->getPublicPosts($settings));
+            $this->response['body']['casino'] = $casinoCardBuilder->main($casino->getPublicPosts($settings));
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -40,6 +41,7 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['CASINO']);
         if(!$data->isEmpty()) {
+            $casinoCardBuilder = new CasinoCardBuilder();
             $casino = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
             $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $settings = [
@@ -47,7 +49,7 @@ class PageService extends BaseService {
                 'limit'     => self::CATEGORY_LIMIT_CASINO,
                 'order_key' => 'rating'
             ];
-            $this->response['body']['casino'] = CardBuilder::casinoCard($casino->getPublicPosts($settings));
+            $this->response['body']['casino'] = $casinoCardBuilder->main($casino->getPublicPosts($settings));
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -117,13 +119,14 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['GAME']);
         if(!$data->isEmpty()) {
+            $gameCardBuilder = new GameCardBuilder();
             $game = new Posts(['table' => $this->tables['GAME'], 'table_meta' => $this->tables['GAME_META']]);
             $this->response['body'] = self::dataFrontCommonDecode($data[0]);
             $settings = [
                 'lang'      => $data[0]->lang,
                 'limit'     => self::CATEGORY_LIMIT_GAME
             ];
-            $this->response['body']['games'] = CardBuilder::gameCard($game->getPublicPosts($settings));
+            $this->response['body']['games'] = $gameCardBuilder->main($game->getPublicPosts($settings));
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }

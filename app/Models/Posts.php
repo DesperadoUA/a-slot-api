@@ -22,7 +22,7 @@ class Posts extends Model
     const ORDER_BY = 'DESC';
     const ORDER_KEY = 'create_at';
     const LANG = 1;
-    const TABLE_WITH_RATING = ['game_meta', 'casino_meta', 'vendor_meta'];
+    const TABLE_WITH_RATING = ['casino_meta', 'vendor_meta'];
 
     public function getPublicPosts($settings = [])
     {
