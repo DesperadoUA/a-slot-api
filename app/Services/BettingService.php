@@ -21,12 +21,11 @@ class BettingService extends FrontBaseService {
         $this->cardBuilder = new BettingCardBuilder();
     }
     public function show($id) {
-        $post = new Posts(['table' => $this->tables['BETTING'], 'table_meta' => $this->tables['BETTING_META']]);
+        $post = new Posts(['table' => $this->configTables['table'], 'table_meta' => $this->configTables['table_meta']]);
         $data = $post->getPublicPostByUrl($id);
 
         if(!$data->isEmpty()) {
-            $this->response['body'] = $data[0];
-            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataDeserialize($data[0], $this->shemas);
+            $this->response['body'] = $this->serialize->frontSerialize($data[0], $this->shemas);
 
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));

@@ -31,8 +31,7 @@ class CasinoService extends FrontBaseService {
         $data = $post->getPublicPostByUrl($id);
 
         if(!$data->isEmpty()) {
-            $this->response['body'] = $data[0];
-            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataDeserialize($data[0], $this->shemas);
+            $this->response['body'] = $this->serialize->frontSerialize($data[0], $this->shemas);
 
             $this->response['body']['vendors'] = [];
             $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_VENDOR_RELATIVE'], $data[0]->id);

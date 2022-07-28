@@ -5,4 +5,4 @@ Admin post service improve
 [x] Poker
 [x] Betting
 [x] News
-[x] Vendor
+[] Vendor

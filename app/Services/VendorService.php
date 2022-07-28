@@ -21,12 +21,11 @@ class VendorService extends FrontBaseService {
         $this->cardBuilder = new VendorCardBuilder();
     }
     public function show($id) {
-        $post = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
+        $post = new Posts(['table' => $this->configTables['table'], 'table_meta' => $this->configTables['table_meta']]);
         $data = $post->getPublicPostByUrl($id);
 
         if(!$data->isEmpty()) {
-            $this->response['body'] = $data[0];
-            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataDeserialize($data[0], $this->shemas);
+            $this->response['body'] = $this->serialize->frontSerialize($data[0], $this->shemas);
 
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));

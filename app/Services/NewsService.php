@@ -25,8 +25,7 @@ class NewsService extends FrontBaseService {
         $data = $post->getPublicPostByUrl($id);
 
         if(!$data->isEmpty()) {
-            $this->response['body'] = $data[0];
-            $this->response['body'] = self::dataCommonDecode($data[0]) + self::dataDeserialize($data[0], $this->shemas);
+            $this->response['body'] = $this->serialize->frontSerialize($data[0], $this->shemas);
 
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));

@@ -8,6 +8,10 @@ class PostSerialize extends BaseSerialize {
         $newData = array_merge(self::adminCommonSerialize($data), self::dataSerialize($data, $shemas));
         return $newData;
     }
+    public function frontSerialize($data, $shemas) {
+        $newData = array_merge(self::frontCommonSerialize($data), self::dataSerialize($data, $shemas));
+        return $newData;
+    }
     protected static function dataSerialize($data, $shemas){
         $newData = [];
         foreach ($shemas as $key => $field) {
@@ -18,7 +22,7 @@ class PostSerialize extends BaseSerialize {
                 $newData[$key] = $data->{$key};
             }
             elseif($field['type'] === 'json') {
-                if(empty($data->{$key})) $newData['exchange'] = [];
+                if(empty($data->{$key})) $newData[$key] = [];
                 else $newData[$key] = json_decode($data->{$key}, true);
             }
         }

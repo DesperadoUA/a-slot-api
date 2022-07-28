@@ -5,6 +5,7 @@ use App\Models\Category;
 use App\Models\Relative;
 use App\Models\Posts;
 use App\Models\Cash;
+use App\Serialize\PostSerialize;
 
 class FrontBaseService
 {
@@ -25,6 +26,7 @@ class FrontBaseService
             'table_relative' => $this->tables['CASINO_CATEGORY_RELATIVE']
         ];
         $this->cardBuilder = new CasinoCardBuilder();
+        $this->serialize = new PostSerialize();
     }
     protected static function dataCommonDecode($data) {
         $newData = [];
@@ -73,7 +75,7 @@ class FrontBaseService
         }
         return $newData;
     }
-    public function category($id){
+    public function category($id) {
         $category = new Category($this->configTables);
         $data = $category->getPublicPostByUrl($id);
         if(!$data->isEmpty()) {
