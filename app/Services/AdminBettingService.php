@@ -15,14 +15,6 @@ class AdminBettingService extends AdminPostService {
             'table_relative' => $this->tables['BETTING_CATEGORY_RELATIVE'],
         ];
     }
-    public function store($data) {
-        $data_save = $this->serialize->validateInsert($data, $this->tables['BETTING'], $this->tables['BETTING_META']);
-        $data_meta = $this->serialize->validateMetaSave($data, $this->shemas);
-        $post = new Posts(['table' => $this->tables['BETTING'], 'table_meta' => $this->tables['BETTING_META']]);
-        $this->response['insert_id'] = $post->insert($data_save, $data_meta);
-        $this->response['confirm'] = 'ok';
-        return $this->response;
-    }
     public function adminShow($id) {
         $post = new Posts(['table' => $this->tables['BETTING'], 'table_meta' => $this->tables['BETTING_META']]);
         $data = $post->getPostById($id);

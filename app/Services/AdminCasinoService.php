@@ -15,14 +15,6 @@ class AdminCasinoService extends AdminPostService {
             'table_relative' => $this->tables['CASINO_CATEGORY_RELATIVE'],
         ];
     }
-    public function store($data) {
-        $data_save = $this->serialize->validateInsert($data, $this->tables['CASINO'], $this->tables['CASINO_META']);
-        $data_meta = $this->serialize->validateMetaSave($data, $this->shemas);
-        $post = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
-        $this->response['insert_id'] = $post->insert($data_save, $data_meta);
-        $this->response['confirm'] = 'ok';
-        return $this->response;
-    }
     public function adminShow($id) {
         $post = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
         $data = $post->getPostById($id);

@@ -15,14 +15,6 @@ class AdminPokerService extends AdminPostService {
             'table_relative' => $this->tables['POKER_CATEGORY_RELATIVE'],
         ];
     }
-    public function store($data) {
-        $data_save = $this->serialize->validateInsert($data, $this->tables['POKER'], $this->tables['POKER_META']);
-        $data_meta = $this->serialize->validateMetaSave($data, $this->shemas);
-        $post = new Posts(['table' => $this->tables['POKER'], 'table_meta' => $this->tables['POKER_META']]);
-        $this->response['insert_id'] = $post->insert($data_save, $data_meta);
-        $this->response['confirm'] = 'ok';
-        return $this->response;
-    }
     public function adminShow($id) {
         $post = new Posts(['table' => $this->tables['POKER'], 'table_meta' => $this->tables['POKER_META']]);
         $data = $post->getPostById($id);

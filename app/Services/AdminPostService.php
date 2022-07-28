@@ -29,6 +29,14 @@ class AdminPostService extends BaseService {
         $this->response['lang'] = config('constants.LANG')[$settings['lang']];
         return $this->response;
     }
+    public function store($data) {
+        $data_save = $this->serialize->validateInsert($data, $this->configTables['table'], $this->configTables['table_meta']);
+        $data_meta = $this->serialize->validateMetaSave($data, $this->shemas);
+        $post = new Posts(['table' => $this->configTables['table'], 'table_meta' => $this->configTables['table_meta']]);
+        $this->response['insert_id'] = $post->insert($data_save, $data_meta);
+        $this->response['confirm'] = 'ok';
+        return $this->response;
+    }
     public function delete($data) {
         $post = new Posts(['table' => $this->configTables['table'], 'table_meta' => $this->configTables['table_meta']]);
         $post->deleteById($data);
