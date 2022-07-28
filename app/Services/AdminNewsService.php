@@ -50,11 +50,4 @@ class AdminNewsService extends AdminPostService {
         Cash::deleteAll();
         return $this->response;
     }
-    public function delete($data) {
-        $post = new Posts(['table' => $this->tables['NEWS'], 'table_meta' => $this->tables['NEWS_META']]);
-        $post->deleteById($data);
-        $this->response['confirm'] = 'ok';
-        Cash::deleteAll();
-        return $this->response;
-    }
 }

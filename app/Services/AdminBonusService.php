@@ -49,11 +49,4 @@ class AdminBonusService extends AdminPostService {
         Cash::deleteAll();
         return $this->response;
     }
-    public function delete($data) {
-        $post = new Posts(['table' => $this->tables['BONUS'], 'table_meta' => $this->tables['BONUS_META']]);
-        $post->deleteById($data);
-        $this->response['confirm'] = 'ok';
-        Cash::deleteAll();
-        return $this->response;
-    }
 }

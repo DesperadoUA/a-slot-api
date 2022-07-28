@@ -55,11 +55,4 @@ class AdminCasinoService extends AdminPostService {
         Cash::deleteAll();
         return $this->response;
     }
-    public function delete($data) {
-        $post = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
-        $post->deleteById($data);
-        $this->response['confirm'] = 'ok';
-        Cash::deleteAll();
-        return $this->response;
-    }
 }

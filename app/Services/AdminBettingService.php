@@ -49,11 +49,4 @@ class AdminBettingService extends AdminPostService {
         Cash::deleteAll();
         return $this->response;
     }
-    public function delete($data) {
-        $post = new Posts(['table' => $this->tables['BETTING'], 'table_meta' => $this->tables['BETTING_META']]);
-        $post->deleteById($data);
-        $this->response['confirm'] = 'ok';
-        Cash::deleteAll();
-        return $this->response;
-    }
 }

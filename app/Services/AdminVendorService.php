@@ -50,11 +50,4 @@ class AdminVendorService extends AdminPostService {
         Cash::deleteAll();
         return $this->response;
     }
-    public function delete($data) {
-        $post = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
-        $post->deleteById($data);
-        $this->response['confirm'] = 'ok';
-        Cash::deleteAll();
-        return $this->response;
-    }
 }

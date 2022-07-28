@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Serialize\PostSerialize;
 use App\Models\Posts;
+use App\Models\Cash;
 
 class AdminPostService extends BaseService {
     public function __construct() {
@@ -26,6 +27,13 @@ class AdminPostService extends BaseService {
         $this->response['confirm'] = 'ok';
         $this->response['total'] = $posts->getTotalCountByLang($settings['lang']);
         $this->response['lang'] = config('constants.LANG')[$settings['lang']];
+        return $this->response;
+    }
+    public function delete($data) {
+        $post = new Posts(['table' => $this->configTables['table'], 'table_meta' => $this->configTables['table_meta']]);
+        $post->deleteById($data);
+        $this->response['confirm'] = 'ok';
+        Cash::deleteAll();
         return $this->response;
     }
 }
