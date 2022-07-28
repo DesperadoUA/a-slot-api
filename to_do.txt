@@ -1,4 +1,4 @@
-Create CardBuilder for posts
+Admin post service improve
 [x] Casino
 [x] Bonus
 [x] Game

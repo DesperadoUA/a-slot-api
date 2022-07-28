@@ -1,28 +1,19 @@
 <?php
 namespace App\Services;
-use App\Models\Posts;
-use App\Services\BaseService;
-use App\Models\Cash;
-use App\Serialize\PostSerialize;
 
-class AdminBettingService extends BaseService {
-    const SLUG = 'betting';
+use App\Models\Posts;
+use App\Models\Cash;
+
+class AdminBettingService extends AdminPostService {
     function __construct() {
         parent::__construct();
-        $this->response = ['body' => [], 'confirm' => 'error'];
         $this->shemas = config('shemas.BETTING');
-        $this->serialize = new PostSerialize();
-    }
-    public function adminIndex($settings) {
-        $posts = new Posts(['table' => $this->tables['BETTING'], 'table_meta' => $this->tables['BETTING_META']]);
-        $arrPosts = $posts->getPosts($settings);
-        $data = [];
-        foreach ($arrPosts as $item) $data[] = $this->serialize->adminSerialize($item, $this->shemas);
-        $this->response['body'] = $data;
-        $this->response['confirm'] = 'ok';
-        $this->response['total'] = $posts->getTotalCountByLang($settings['lang']);
-        $this->response['lang'] = config('constants.LANG')[$settings['lang']];
-        return $this->response;
+        $this->configTables = [
+            'table' => $this->tables['BETTING'],
+            'table_meta' => $this->tables['BETTING_META'],
+            'table_category' => $this->tables['BETTING_CATEGORY'],
+            'table_relative' => $this->tables['BETTING_CATEGORY_RELATIVE'],
+        ];
     }
     public function store($data) {
         $data_save = $this->serialize->validateInsert($data, $this->tables['BETTING'], $this->tables['BETTING_META']);

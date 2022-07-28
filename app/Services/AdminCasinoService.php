@@ -1,29 +1,19 @@
 <?php
 namespace App\Services;
+
 use App\Models\Posts;
-use App\Services\BaseService;
-use App\Serialize\PostSerialize;
 use App\Models\Cash;
 
-class AdminCasinoService extends BaseService {
-    const SLUG = 'casino';
+class AdminCasinoService extends AdminPostService {
     function __construct() {
         parent::__construct();
-        $this->response = ['body' => [], 'confirm' => 'error'];
         $this->shemas = config('shemas.CASINO');
-        $this->serialize = new PostSerialize();
-    }
-   
-    public function adminIndex($settings) {
-        $posts = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
-        $arrPosts = $posts->getPosts($settings);
-        $data = [];
-        foreach ($arrPosts as $item) $data[] = $this->serialize->adminSerialize($item, $this->shemas);
-        $this->response['body'] = $data;
-        $this->response['confirm'] = 'ok';
-        $this->response['total'] = $posts->getTotalCountByLang($settings['lang']);
-        $this->response['lang'] = config('constants.LANG')[$settings['lang']];
-        return $this->response;
+        $this->configTables = [
+            'table' => $this->tables['CASINO'],
+            'table_meta' => $this->tables['CASINO_META'],
+            'table_category' => $this->tables['CASINO_CATEGORY'],
+            'table_relative' => $this->tables['CASINO_CATEGORY_RELATIVE'],
+        ];
     }
     public function store($data) {
         $data_save = $this->serialize->validateInsert($data, $this->tables['CASINO'], $this->tables['CASINO_META']);
