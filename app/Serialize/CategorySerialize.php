@@ -14,4 +14,10 @@ class CategorySerialize extends BaseSerialize {
         $newData['faq'] = json_encode($data['faq']);
         return $newData;
     }
+    public function frontSerialize($data) {
+        $newData = self::frontCommonSerialize($data);
+        $newData['parent_id'] = $data->parent_id;
+        $newData['faq'] = empty(json_decode($data->faq, true)) ? [] : json_decode($data->faq, true);
+        return $newData;
+    }
 }

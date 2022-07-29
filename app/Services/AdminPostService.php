@@ -3,6 +3,8 @@ namespace App\Services;
 
 use App\Serialize\PostSerialize;
 use App\Models\Posts;
+use Illuminate\Support\Facades\DB;
+use App\Models\Relative;
 use App\Models\Cash;
 
 class AdminPostService extends BaseService {
@@ -43,5 +45,95 @@ class AdminPostService extends BaseService {
         $this->response['confirm'] = 'ok';
         Cash::deleteAll();
         return $this->response;
+    }
+    public function updateCategory($id, $arr_titles, $main_table, $category_table, $relative_table) {
+        DB::table($relative_table)->where('post_id', $id)->delete();
+        if(!empty($arr_titles)) {
+            $current_post = DB::table($main_table)->where('id', $id)->get();
+            if(!$current_post->isEmpty()) {
+                $arr_category = DB::table($category_table)
+                    ->whereIn('title', $arr_titles)
+                    ->where('lang', $current_post[0]->lang)
+                    ->get();
+                $data = [];
+                foreach ($arr_category as $item) {
+                    $data[] = [
+                        'post_id' => $current_post[0]->id,
+                        'relative_id' => $item->id
+                    ];
+                }
+                Relative::insert($relative_table, $data);
+            }
+        }
+    }
+    public function updatePostPost($id, $arr_titles, $table_1, $table_2, $relative_table) {
+        DB::table($relative_table)->where('post_id', $id)->delete();
+        if(!empty($arr_titles)) {
+            $current_post = DB::table($table_1)->where('id', $id)->get();
+            if(!$current_post->isEmpty()) {
+                $arr_relative_posts = DB::table($table_2)
+                    ->whereIn('title', $arr_titles)
+                    ->where('lang', $current_post[0]->lang)
+                    ->get();
+                $data = [];
+                foreach ($arr_relative_posts as $item) {
+                    $data[] = [
+                        'post_id' => $current_post[0]->id,
+                        'relative_id' => $item->id
+                    ];
+                }
+                Relative::insert($relative_table, $data);
+            }
+        }
+    }
+    protected static function relativePostPost($id, $table_1, $table_2, $relative_table) {
+        $data = [];
+        $current_post = DB::table($table_1)->where('id', $id)->get();
+        if($current_post->isEmpty()) {
+            return $data;
+        }
+        else {
+            $arr_title_relative = [];
+            $list_relative = DB::table($table_2)->where('lang', $current_post[0]->lang)->get();
+            if(!$list_relative->isEmpty()) {
+                foreach ($list_relative as $item) $arr_title_relative[] = $item->title;
+            }
+            $data['all_value'] = $arr_title_relative;
+            $arr_relative_post_id = Relative::getRelativeByPostId($relative_table, $current_post[0]->id);
+            if(empty($arr_relative_post_id)) $data['current_value'] = [];
+            else {
+                $arr_category = DB::table($table_2)
+                    ->whereIn('id', $arr_relative_post_id)
+                    ->get();
+                $data['current_value'] = [];
+                foreach ($arr_category as $item) $data['current_value'][] = $item->title;
+            }
+            return $data;
+        }
+    }
+    protected static function relativeCategoryPost($id, $main_table, $category_table, $relative_table) {
+        $data = [];
+        $current_post = DB::table($main_table)->where('id', $id)->get();
+        if($current_post->isEmpty()) {
+            return $data;
+        }
+        else {
+            $arr_title_category = [];
+            $list_category = DB::table($category_table)->where('lang', $current_post[0]->lang)->get();
+            if(!$list_category->isEmpty()) {
+                foreach ($list_category as $item) $arr_title_category[] = $item->title;
+            }
+            $data['all_value'] = $arr_title_category;
+            $arr_relative_category_id = Relative::getRelativeByPostId($relative_table, $current_post[0]->id);
+            if(empty($arr_relative_category_id)) $data['current_value'] = [];
+            else {
+                $arr_category = DB::table($category_table)
+                                    ->whereIn('id', $arr_relative_category_id)
+                                    ->get();
+                $data['current_value'] = [];
+                foreach ($arr_category as $item) $data['current_value'][] = $item->title;
+            }
+            return $data;
+        }
     }
 }
