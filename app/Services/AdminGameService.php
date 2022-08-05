@@ -23,6 +23,9 @@ class AdminGameService extends AdminPostService {
             $this->response['body']['category'] = self::relativeCategoryPost($id, $this->tables['GAME'], 
                                                                                   $this->tables['GAME_CATEGORY'], 
                                                                                   $this->tables['GAME_CATEGORY_RELATIVE']);
+            $this->response['body']['game_vendor'] = self::relativePostPost($id, $this->tables['GAME'], 
+                                                                                  $this->tables['VENDOR'], 
+                                                                                  $this->tables['GAME_VENDOR_RELATIVE']);
             $this->response['confirm'] = 'ok';
         }
         return $this->response;
@@ -37,6 +40,9 @@ class AdminGameService extends AdminPostService {
         self::updateCategory($data['id'], $data['category'], $this->tables['GAME'], 
                                                              $this->tables['GAME_CATEGORY'], 
                                                              $this->tables['GAME_CATEGORY_RELATIVE']);
+        self::updatePostPost($data['id'], $data['game_vendor'], $this->tables['GAME'], 
+                                                             $this->tables['VENDOR'], 
+                                                             $this->tables['GAME_VENDOR_RELATIVE']);
         $this->response['confirm'] = 'ok';
         Cash::deleteAll();
         return $this->response;

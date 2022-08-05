@@ -20,6 +20,7 @@ return [
     'GAME_META' => 'game_meta',
     'GAME_CATEGORY' => 'game_category',
     'GAME_CATEGORY_RELATIVE' => 'game_category_relative',
+    'GAME_VENDOR_RELATIVE' => 'game_vendor_relative',
 
     'BETTING' => 'bettings',
     'BETTING_META' => 'betting_meta',
