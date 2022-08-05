@@ -37,8 +37,9 @@ class CasinoService extends FrontBaseService {
             $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_VENDOR_RELATIVE'], $data[0]->id);
             if(!empty($arr_posts)) {
                 $vendorCardBuilder = new VendorCardBuilder();
-                $post = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
-                $this->response['body']['vendors'] = $vendorCardBuilder::defaultCard($post->getPublicPostsByArrId($arr_posts));
+                $vendorModel = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
+                $vendorPublicPosts = $vendorModel->getPublicPostsByArrId($arr_posts);
+                $this->response['body']['vendors'] = $vendorCardBuilder->vendorCasino($vendorPublicPosts);
             }
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
