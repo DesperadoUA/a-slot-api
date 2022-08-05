@@ -24,6 +24,9 @@ class CasinoMeta extends Migration
             $table->string('min_deposit');
             $table->string('min_payout');
             $table->longText('slot_category');
+            $table->longText('payment_methods');
+            $table->longText('payment_out_methods');
+            $table->longText('active_languages');
             $table->unique('post_id');
             $table->foreign('post_id')
                   ->references('id')

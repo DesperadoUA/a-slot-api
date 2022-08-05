@@ -44,6 +44,10 @@ return [
         'licenses' => [
             'type' => 'json',
             'default' => []
+        ],
+        'active_languages' => [
+            'type' => 'json',
+            'default' => []
         ]
         ],
     'BONUS' => [
