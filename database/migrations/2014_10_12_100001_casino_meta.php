@@ -27,6 +27,10 @@ class CasinoMeta extends Migration
             $table->longText('payment_methods');
             $table->longText('payment_out_methods');
             $table->longText('active_languages');
+            $table->integer('convenience');
+            $table->integer('replenishment');
+            $table->integer('support');
+            $table->integer('actions');
             $table->unique('post_id');
             $table->foreign('post_id')
                   ->references('id')

@@ -37,10 +37,10 @@ return [
     'VENDOR_CATEGORY' => 'vendor_category',
     'VENDOR_CATEGORY_RELATIVE' => 'vendor_category_relative',
 
-    'PAYMENT' => 'payments',
-    'PAYMENT_META' => 'payment_meta',
-    'PAYMENT_CATEGORY' => 'payment_category',
-    'PAYMENT_CATEGORY_RELATIVE' => 'payment_category_relative',
+    'SHARES' => 'shares',
+    'SHARE_META' => 'share_meta',
+    'SHARE_CATEGORY' => 'share_category',
+    'SHARE_CATEGORY_RELATIVE' => 'share_category_relative',
 
     'PAGES' => 'pages'
 ];

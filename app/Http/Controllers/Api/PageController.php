@@ -37,8 +37,8 @@ class PageController extends Controller
     public function main(){ 
         return response()->json($this->service->main());
     }
-    public function casinos(){
-        return response()->json($this->service->casinos());
+    public function shares(){
+        return response()->json($this->service->shares());
     }
     public function bonuses(){
         return response()->json($this->service->bonuses());
@@ -46,11 +46,13 @@ class PageController extends Controller
     public function games(){
         return response()->json($this->service->games());
     }
+    public function search(Request $request){
+        $searchWord = $request->has('searchWord') ? $request->input('searchWord') : '';
+        $lang = $request->has('lang') ? $request->input('lang') : self::LANG;
+        return response()->json($this->service->search($searchWord, $lang));
+    }
     public function vendors(){
         return response()->json($this->service->vendors());
-    }
-    public function payments(){
-        return response()->json($this->service->payments());
     }
     public function pokers(){
         return response()->json($this->service->pokers());

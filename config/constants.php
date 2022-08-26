@@ -16,6 +16,8 @@ return [
         'POKER' => 'poker',
         'BETTING' => 'betting',
         'VENDOR' => 'vendor',
-        'PAYMENT' => 'payment'
+        'PAYMENT' => 'payment',
+        'SHARE' => 'share',
+        'SEARCH' => 'search'
     ]
 ];

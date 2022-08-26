@@ -7,7 +7,7 @@ Route::namespace('Api')->group(function () {
     Route::post('admin/pages/{id}', 'AdminPageController@show')->middleware('api_auth');
     /* Front */
     Route::get('pages/'.config('constants.PAGES.MAIN'), 'PageController@main')->middleware('cash');
-    Route::get('pages/'.config('constants.PAGES.CASINO'), 'PageController@casinos')->middleware('cash');
+    Route::get('pages/'.config('constants.PAGES.SHARE'), 'PageController@shares')->middleware('cash');
     Route::get('pages/'.config('constants.PAGES.BONUS'), 'PageController@bonuses')->middleware('cash');
     Route::get('pages/'.config('constants.PAGES.GAME'), 'PageController@games')->middleware('cash');
     Route::get('pages/'.config('constants.PAGES.VENDOR'), 'PageController@vendors')->middleware('cash');
@@ -16,5 +16,6 @@ Route::namespace('Api')->group(function () {
     Route::get('pages/'.config('constants.PAGES.BETTING'), 'PageController@bettings')->middleware('cash');
     Route::get('pages/'.config('constants.PAGES.NEWS'), 'PageController@news')->middleware('cash');
     Route::get('pages/'.config('constants.PAGES.SITE_MAP'), 'PageController@siteMap')->middleware('cash');
+    Route::get('pages/'.config('constants.PAGES.SEARCH'), 'PageController@search');
     Route::get(config('constants.PAGES.SEARCH'), 'PageController@search');
 });

@@ -7,6 +7,7 @@ use App\Services\BaseService;
 use App\Models\Cash;
 use App\CardBuilder\CasinoCardBuilder;
 use App\CardBuilder\GameCardBuilder;
+use App\CardBuilder\BaseCardBuilder;
 class PageService extends BaseService {
     protected $response;
     protected $config;
@@ -37,19 +38,11 @@ class PageService extends BaseService {
         }
         return $this->response;
     }
-    public function casinos(){
+    public function shares(){
         $post = new Pages();
-        $data = $post->getPublicPostByUrl($this->config['CASINO']);
+        $data = $post->getPublicPostByUrl($this->config['SHARE']);
         if(!$data->isEmpty()) {
-            $casinoCardBuilder = new CasinoCardBuilder();
-            $casino = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
             $this->response['body'] = $this->serialize->frontSerialize($data[0]);
-            $settings = [
-                'lang'      => $data[0]->lang,
-                'limit'     => self::CATEGORY_LIMIT_CASINO,
-                'order_key' => 'rating'
-            ];
-            $this->response['body']['casino'] = $casinoCardBuilder->main($casino->getPublicPosts($settings));
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }
@@ -122,6 +115,23 @@ class PageService extends BaseService {
         }
         return $this->response;
     }
+    public function search($searchWord, $lang) {
+        if(empty($searchWord)) {
+            $this->response['body']['posts'] = [];
+            $this->response['confirm'] = 'ok';
+        } else {
+            $arrDb = [
+                'CASINO', 'BONUS', 'POKER', 'GAME', 'BETTING', 'NEWS', 'VENDOR', 'SHARES'
+            ];
+            $posts = [];
+            foreach($arrDb as $db) {
+                $posts = array_merge($posts, BaseCardBuilder::defaultCard(Posts::searchPublicByTitle($lang, $this->tables[$db], $searchWord)));
+            }
+            $this->response['body']['posts'] = $posts;
+            $this->response['confirm'] = 'ok';
+        }
+        return $this->response;
+    }
     public function adminIndex($settings) {
         $posts = new Pages();
         $arrPosts = $posts->getPosts($settings);
@@ -149,6 +159,7 @@ class PageService extends BaseService {
         $data_save = $this->serialize->validateUpdate($data);
         $post->updateById($data['id'], $data_save);
         $this->response['confirm'] = 'ok';
+        $this->response['test'] = $data_save;
         Cash::deleteAll();
         return $this->response;
     }

@@ -48,7 +48,23 @@ return [
         'active_languages' => [
             'type' => 'json',
             'default' => []
-        ]
+        ],
+        'convenience' => [
+            'type' => 'number',
+            'default' => 0
+        ],
+        'replenishment' => [
+            'type' => 'number',
+            'default' => 0
+        ],
+        'support' => [
+            'type' => 'number',
+            'default' => 0
+        ],
+        'actions' => [
+            'type' => 'number',
+            'default' => 0
+        ],
         ],
     'BONUS' => [
         'rating' => [
@@ -93,5 +109,11 @@ return [
                 'type' => 'number',
                 'default' => 0
             ]
+            ],
+    'SHARE' => [
+        'faq' => [
+            'type' => 'json',
+            'default' => []
+        ]
     ]
 ];

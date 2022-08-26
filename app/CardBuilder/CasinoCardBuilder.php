@@ -28,7 +28,11 @@ class CasinoCardBuilder extends BaseCardBuilder {
                 'min_deposit' => $item->min_deposit,
                 'min_payout' => $item->min_payout,
                 'active_languages' => empty(json_decode($item->active_languages, true)) ? [] : json_decode($item->active_languages, true),
-                'vendors' => $vendorCardBuilder->vendorCasino($vendorPublicPosts)
+                'vendors' => $vendorCardBuilder->vendorCasino($vendorPublicPosts),
+                'convenience' => $item->convenience,
+                'replenishment' => $item->replenishment,
+                'support' => $item->support,
+                'actions' => $item->actions
             ];
         }
         return $posts;

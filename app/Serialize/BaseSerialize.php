@@ -14,7 +14,7 @@ class BaseSerialize {
         $newData['create_at']   = $data->create_at;
         $newData['update_at']   = $data->update_at;
         $newData['slug']        = $data->slug;
-        $newData['content']     = $data->content;
+        $newData['content']     = json_decode($data->content, true);
         $newData['description'] = htmlspecialchars_decode($data->description);
         $newData['h1']          = htmlspecialchars_decode($data->h1);
         $newData['keywords']    = htmlspecialchars_decode($data->keywords);
@@ -42,7 +42,7 @@ class BaseSerialize {
         }
         $newData['create_at']   = isset($data['create_at']) ? $data['create_at'] : date('Y-m-d');
         $newData['update_at']   = isset($data['update_at']) ? $data['update_at'] : date('Y-m-d');
-        $newData['content']     = isset($data['content']) ? $data['content'] : '';
+        $newData['content']     = empty($data['content']) ? json_encode([]) : json_encode($data['content']);
         $newData['description'] = isset($data['description']) ? Validate::textValidate($data['description']) : '';
         $newData['h1']          = isset($data['h1']) ? Validate::textValidate($data['h1']) : '';
         $newData['keywords']    = isset($data['keywords']) ? Validate::textValidate($data['keywords']) : '';
@@ -73,12 +73,7 @@ class BaseSerialize {
         $newData['create_at'] = $data->create_at;
         $newData['update_at'] = $data->update_at;
         $newData['slug'] = $data->slug;
-        $str = str_replace('<pre', '<div', $data->content);
-        $str = str_replace('</pre', '</div', $str);
-        $str = str_replace('&nbsp;', '', $str);
-        $str = str_replace('<p><br></p>', '', $str);
-        $str = str_replace('<p></p>', '', $str);
-        $newData['content'] = htmlspecialchars_decode($str);
+        $newData['content'] = json_decode($data->content, true);
         $newData['description'] = htmlspecialchars_decode($data->description);
         $newData['h1'] = htmlspecialchars_decode($data->h1);
         $newData['keywords'] = htmlspecialchars_decode($data->keywords);

@@ -1,4 +1,4 @@
-Admin post service improve
+Create new editor for content
 [x] Casino
 [x] Bonus
 [x] Game
@@ -6,3 +6,7 @@ Admin post service improve
 [x] Betting
 [x] News
 [x] Vendor
+[x] Page
+
+/---------------------------/
+Create relative bonus casino
