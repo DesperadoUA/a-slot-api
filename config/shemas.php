@@ -102,7 +102,11 @@ return [
             'autor' => [
                 'type' => 'string',
                 'default' => ''
-            ]
+            ],
+            'ref' => [
+                'type' => 'json',
+                'default' => []
+            ],
         ],
     'VENDOR' => [
             'rating' => [

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class NewsMeta extends Migration
+class BonusCasinoRelative extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,16 @@ class NewsMeta extends Migration
      */
     public function up()
     {
-        Schema::create('news_meta', function (Blueprint $table) {
+        Schema::create('bonus_casino_relative', function (Blueprint $table) {
             $table->bigInteger('post_id')->unsigned();
-            $table->text('autor');
-            $table->string('ref');
-            $table->unique('post_id');
+            $table->bigInteger('relative_id')->unsigned();
             $table->foreign('post_id')
                 ->references('id')
-                ->on('news')
+                ->on('bonuses')
+                ->onDelete('cascade');
+            $table->foreign('relative_id')
+                ->references('id')
+                ->on('casinos')
                 ->onDelete('cascade');
         });
     }
@@ -32,6 +34,6 @@ class NewsMeta extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('news_meta');
+        Schema::dropIfExists('bonus_casino_relative');
     }
 }

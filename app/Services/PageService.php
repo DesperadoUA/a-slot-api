@@ -6,12 +6,14 @@ use App\Serialize\PageSerialize;
 use App\Services\BaseService;
 use App\Models\Cash;
 use App\CardBuilder\CasinoCardBuilder;
+use App\CardBuilder\BonusCardBuilder;
 use App\CardBuilder\GameCardBuilder;
 use App\CardBuilder\BaseCardBuilder;
 class PageService extends BaseService {
     protected $response;
     protected $config;
     const MAIN_PAGE_LIMIT_CASINO = 10;
+    const MAIN_PAGE_LIMIT_BONUSES = 1000;
     const CATEGORY_LIMIT_CASINO = 1000;
     const CATEGORY_LIMIT_GAME = 1000;
     function __construct() {
@@ -52,7 +54,16 @@ class PageService extends BaseService {
         $post = new Pages();
         $data = $post->getPublicPostByUrl($this->config['BONUS']);
         if(!$data->isEmpty()) {
+            $bonusCardBuilder = new BonusCardBuilder();
             $this->response['body'] = $this->serialize->frontSerialize($data[0]);
+            $bonusModel = new Posts(['table' => $this->tables['BONUS'], 'table_meta' => $this->tables['BONUS_META']]);
+            $settings = [
+                'lang'      => $data[0]->lang,
+                'limit'     => self::MAIN_PAGE_LIMIT_BONUSES,
+                'order_key' => 'rating'
+            ];
+            $this->response['body']['bonus'] = $bonusCardBuilder->main($bonusModel->getPublicPosts($settings));
+
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));
         }

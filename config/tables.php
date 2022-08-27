@@ -4,6 +4,7 @@ return [
     'BONUS_META' => 'bonus_meta',
     'BONUS_CATEGORY' => 'bonus_category',
     'BONUS_CATEGORY_RELATIVE' => 'bonus_category_relative',
+    'BONUS_CASINO_RELATIVE' => 'bonus_casino_relative',
 
     'CASINO' => 'casinos',
     'CASINO_META' => 'casino_meta',

@@ -23,6 +23,10 @@ class AdminBonusService extends AdminPostService {
             $this->response['body']['category'] = self::relativeCategoryPost($id, $this->tables['BONUS'], 
                                                                                   $this->tables['BONUS_CATEGORY'], 
                                                                                   $this->tables['BONUS_CATEGORY_RELATIVE']);
+            
+            $this->response['body']['bonus_casino'] = self::relativePostPost($id, $this->tables['BONUS'], 
+                                                                                  $this->tables['CASINO'], 
+                                                                                  $this->tables['BONUS_CASINO_RELATIVE']);
             $this->response['confirm'] = 'ok';
         }
         return $this->response;
@@ -37,6 +41,10 @@ class AdminBonusService extends AdminPostService {
         self::updateCategory($data['id'], $data['category'], $this->tables['BONUS'], 
                                                              $this->tables['BONUS_CATEGORY'], 
                                                              $this->tables['BONUS_CATEGORY_RELATIVE']);
+                                                             
+        self::updatePostPost($data['id'], $data['bonus_casino'], $this->tables['BONUS'], 
+                                                                 $this->tables['CASINO'], 
+                                                                 $this->tables['BONUS_CASINO_RELATIVE']);
         $this->response['confirm'] = 'ok';
         Cash::deleteAll();
         return $this->response;
