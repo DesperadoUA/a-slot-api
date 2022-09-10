@@ -13,7 +13,10 @@ class NewsCardBuilder extends BaseCardBuilder {
             $posts[] = [
                 'title' => $item->title,
                 'permalink' => '/'.$item->slug.'/'.$item->permalink,
-                'thumbnail' => $item->thumbnail
+                'thumbnail' => $item->thumbnail,
+                'ref' => json_decode($item->ref, true),
+                'create_at' => $item->create_at,
+                'short_desc' => $item->short_desc
             ];
         }
         return $posts;

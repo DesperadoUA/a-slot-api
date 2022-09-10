@@ -74,7 +74,15 @@ return [
         'ref' => [
                 'type' => 'json',
                 'default' => []
-            ]
+        ],
+        'bonus_system' => [
+            'type' => 'json',
+            'default' => []
+        ],
+        'value' => [
+            'type' => 'string',
+            'default' => ''
+        ]
         ],
     'GAME' => [
             'iframe' => [

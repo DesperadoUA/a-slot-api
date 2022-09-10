@@ -16,6 +16,8 @@ class BonusMeta extends Migration
         Schema::create('bonus_meta', function (Blueprint $table) {
             $table->bigInteger('post_id')->unsigned();
             $table->boolean('close');
+            $table->longText('bonus_system');
+            $table->text('value');
             $table->unique('post_id');
             $table->foreign('post_id')
                 ->references('id')

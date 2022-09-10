@@ -21,7 +21,11 @@ class BonusCardBuilder extends BaseCardBuilder {
                 'title' => $item->title,
                 'permalink' => '/'.$item->slug.'/'.$item->permalink,
                 'thumbnail' => $item->thumbnail,
-                'casino' => $casino->isEmpty() ? [] : $casinoCardBuilder->defaultCard($casino)[0]
+                'casino' => $casino->isEmpty() ? [] : $casinoCardBuilder->defaultCard($casino)[0],
+                'value' => $item->value,
+                'bonus_system' => json_decode($item->bonus_system, true),
+                'ref' => json_decode($item->ref, true),
+                'rating' => $item->rating
             ];
         }
         return $posts;
