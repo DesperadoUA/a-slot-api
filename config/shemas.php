@@ -79,6 +79,10 @@ return [
             'type' => 'json',
             'default' => []
         ],
+        'characters' => [
+            'type' => 'json',
+            'default' => []
+        ],
         'value' => [
             'type' => 'string',
             'default' => ''

@@ -17,6 +17,7 @@ class BonusMeta extends Migration
             $table->bigInteger('post_id')->unsigned();
             $table->boolean('close');
             $table->longText('bonus_system');
+            $table->longText('characters');
             $table->text('value');
             $table->unique('post_id');
             $table->foreign('post_id')
