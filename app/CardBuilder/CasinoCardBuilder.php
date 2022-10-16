@@ -12,9 +12,9 @@ class CasinoCardBuilder extends BaseCardBuilder {
         $vendorModel = new Posts(['table' => $this->tables['VENDOR'], 'table_meta' => $this->tables['VENDOR_META']]);
         $vendorCardBuilder = new VendorCardBuilder();
         foreach ($arr_posts as $item) {
-            $arr_posts = Relative::getRelativeByPostId($this->tables['CASINO_VENDOR_RELATIVE'], $item->id);
-            if(!empty($arr_posts)) {
-                $vendorPublicPosts = $vendorModel->getPublicPostsByArrId($arr_posts);
+            $vendor_posts = Relative::getRelativeByPostId($this->tables['CASINO_VENDOR_RELATIVE'], $item->id);
+            if(!empty($vendor_posts)) {
+                $vendorPublicPosts = $vendorModel->getPublicPostsByArrId($vendor_posts);
             }
             $posts[] = [
                 'thumbnail' => $item->thumbnail,

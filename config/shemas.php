@@ -92,6 +92,10 @@ return [
             'iframe' => [
                 'type' => 'string',
                 'default' => ''
+            ],
+            'special_ref' => [
+                'type' => 'json',
+                'default' => []
             ]
         ],
     'POKER' => [

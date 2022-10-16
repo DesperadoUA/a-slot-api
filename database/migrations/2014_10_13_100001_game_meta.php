@@ -16,6 +16,7 @@ class GameMeta extends Migration
         Schema::create('game_meta', function (Blueprint $table) {
             $table->bigInteger('post_id')->unsigned();
             $table->text('iframe');
+            $table->text('special_ref');
             $table->unique('post_id');
             $table->foreign('post_id')
                 ->references('id')
