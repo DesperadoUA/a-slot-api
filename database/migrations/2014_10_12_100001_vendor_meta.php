@@ -16,6 +16,8 @@ class VendorMeta extends Migration
         Schema::create('vendor_meta', function (Blueprint $table) {
             $table->bigInteger('post_id')->unsigned();
             $table->integer('rating');
+            $table->string('licenses');
+            $table->string('characteristics');
             $table->unique('post_id');
             $table->foreign('post_id')
                 ->references('id')

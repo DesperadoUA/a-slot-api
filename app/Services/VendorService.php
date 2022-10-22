@@ -1,9 +1,12 @@
 <?php
 namespace App\Services;
 use App\Models\Posts;
+use App\Models\Relative;
 use App\Services\FrontBaseService;
 use App\Models\Cash;
 use App\CardBuilder\VendorCardBuilder;
+use App\CardBuilder\GameCardBuilder;
+use App\CardBuilder\CasinoCardBuilder;
 
 class VendorService extends FrontBaseService {
     protected $response;
@@ -25,7 +28,19 @@ class VendorService extends FrontBaseService {
         $data = $post->getPublicPostByUrl($id);
 
         if(!$data->isEmpty()) {
+            $gameModel = new Posts(['table' => $this->tables['GAME'], 'table_meta' => $this->tables['GAME_META']]);
+            $casinoModel = new Posts(['table' => $this->tables['CASINO'], 'table_meta' => $this->tables['CASINO_META']]);
             $this->response['body'] = $this->serialize->frontSerialize($data[0], $this->shemas);
+
+            $gameIds = Relative::getPostIdByRelative($this->tables['GAME_VENDOR_RELATIVE'], $data[0]->id);
+            $games = $gameModel->getPublicPostsByArrId($gameIds);
+            $gameCardBuilder = new GameCardBuilder();
+            $this->response['body']['games'] = $gameCardBuilder->main($games);
+
+            $casinoIds = Relative::getPostIdByRelative($this->tables['CASINO_VENDOR_RELATIVE'], $data[0]->id);
+            $casinos = $casinoModel->getPublicPostsByArrId($casinoIds);
+            $casinoCardBuilder = new CasinoCardBuilder();
+            $this->response['body']['casinos'] = $casinoCardBuilder->sliderCard($casinos);
 
             $this->response['confirm'] = 'ok';
             Cash::store(url()->current(), json_encode($this->response));

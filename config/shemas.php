@@ -128,8 +128,16 @@ return [
             'rating' => [
                 'type' => 'number',
                 'default' => 0
-            ]
             ],
+            'licenses' => [
+                'type' => 'json',
+                'default' => []
+            ],
+            'characteristics' => [
+                'type' => 'json',
+                'default' => []
+            ]
+    ],
     'SHARE' => [
         'faq' => [
             'type' => 'json',
