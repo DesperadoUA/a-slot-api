@@ -96,6 +96,18 @@ return [
             'special_ref' => [
                 'type' => 'json',
                 'default' => []
+            ],
+            'characteristics' => [
+                'type' => 'json',
+                'default' => []
+            ],
+            'symbols' => [
+                'type' => 'json',
+                'default' => []
+            ],
+            'gallery' => [
+                'type' => 'json',
+                'default' => []
             ]
         ],
     'POKER' => [

@@ -17,6 +17,9 @@ class GameMeta extends Migration
             $table->bigInteger('post_id')->unsigned();
             $table->text('iframe');
             $table->text('special_ref');
+            $table->string('characteristics');
+            $table->string('symbols');
+            $table->string('gallery');
             $table->unique('post_id');
             $table->foreign('post_id')
                 ->references('id')
